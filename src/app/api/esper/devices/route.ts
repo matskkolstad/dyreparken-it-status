@@ -5,19 +5,23 @@ import { isDummyDataEnabled, requireEnv } from "@/lib/server/env";
 import { fetchJsonServer } from "@/lib/server/fetch";
 import type { EsperDevices } from "@/lib/types";
 
-type EsperDevicesResponse =
-  | { devices?: { isOnline?: boolean; online?: boolean; status?: string }[] }
-  | { data?: { isOnline?: boolean; online?: boolean; status?: string }[] }
-  | { isOnline?: boolean; online?: boolean; status?: string }[];
+type EsperDevice = { isOnline?: boolean; online?: boolean; status?: string };
 
-function normalizeList(raw: EsperDevicesResponse): any[] {
+type EsperDevicesResponse =
+  | { devices?: EsperDevice[] }
+  | { data?: EsperDevice[] }
+  | EsperDevice[];
+
+function normalizeList(raw: EsperDevicesResponse): EsperDevice[] {
   if (Array.isArray(raw)) return raw;
-  if (Array.isArray((raw as any).devices)) return (raw as any).devices;
-  if (Array.isArray((raw as any).data)) return (raw as any).data;
+  if (Array.isArray((raw as { devices?: EsperDevice[] }).devices))
+    return (raw as { devices: EsperDevice[] }).devices;
+  if (Array.isArray((raw as { data?: EsperDevice[] }).data))
+    return (raw as { data: EsperDevice[] }).data;
   return [];
 }
 
-function isOnline(device: any) {
+function isOnline(device: EsperDevice) {
   if (typeof device?.isOnline === "boolean") return device.isOnline;
   if (typeof device?.online === "boolean") return device.online;
   const s = typeof device?.status === "string" ? device.status.toLowerCase() : "";

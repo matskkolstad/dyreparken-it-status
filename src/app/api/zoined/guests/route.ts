@@ -5,9 +5,9 @@ import { isDummyDataEnabled, requireEnv } from "@/lib/server/env";
 import { fetchJsonServer } from "@/lib/server/fetch";
 import type { ZoinedGuests } from "@/lib/types";
 
-type ZoinedResponse =
-  | { dyreparkenGuests?: number; badelandGuests?: number }
-  | { data?: { dyreparkenGuests?: number; badelandGuests?: number } };
+type ZoinedGuestData = { dyreparkenGuests?: number; badelandGuests?: number };
+
+type ZoinedResponse = ZoinedGuestData | { data?: ZoinedGuestData };
 
 export async function GET() {
   if (isDummyDataEnabled()) {
@@ -20,10 +20,11 @@ export async function GET() {
   const apiKey = process.env.ZOINED_API_KEY;
 
   const raw = await fetchJsonServer<ZoinedResponse>(url, {
-    headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined,
+    headers: apiKey ? { Authorization: "Bearer " + apiKey } : undefined,
   });
 
-  const data = (raw as any).data ?? raw;
+  const data: ZoinedGuestData =
+    (raw as { data?: ZoinedGuestData }).data ?? (raw as ZoinedGuestData);
 
   const result: ZoinedGuests = {
     lastUpdatedAt: new Date().toISOString(),
@@ -34,4 +35,3 @@ export async function GET() {
 
   return NextResponse.json(result);
 }
-

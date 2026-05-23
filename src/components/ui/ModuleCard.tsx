@@ -2,26 +2,33 @@ import type { ReactNode } from "react";
 
 import type { ModuleSeverity } from "@/lib/types";
 
-const severityStyles: Record<ModuleSeverity, { ring: string; glow: string; pill: string }> = {
+const severityStyles: Record<
+  ModuleSeverity,
+  { ring: string; glow: string; pill: string; dot: string }
+> = {
   ok: {
     ring: "ring-[color:rgba(15,184,137,0.35)]",
     glow: "shadow-[0_0_0_1px_rgba(15,184,137,0.18),0_18px_60px_-28px_rgba(15,184,137,0.55)]",
     pill: "bg-[color:rgba(15,184,137,0.15)] text-[color:rgba(170,255,230,0.95)] ring-[color:rgba(15,184,137,0.35)]",
+    dot: "bg-[color:#0fb889]",
   },
   degraded: {
     ring: "ring-[color:rgba(247,181,0,0.35)]",
     glow: "shadow-[0_0_0_1px_rgba(247,181,0,0.18),0_18px_60px_-28px_rgba(247,181,0,0.5)]",
     pill: "bg-[color:rgba(247,181,0,0.15)] text-[color:rgba(255,244,205,0.95)] ring-[color:rgba(247,181,0,0.35)]",
+    dot: "bg-[color:#f7b500]",
   },
   down: {
     ring: "ring-[color:rgba(255,107,61,0.35)]",
     glow: "shadow-[0_0_0_1px_rgba(255,107,61,0.2),0_18px_60px_-28px_rgba(255,107,61,0.55)]",
     pill: "bg-[color:rgba(255,107,61,0.15)] text-[color:rgba(255,226,217,0.95)] ring-[color:rgba(255,107,61,0.35)]",
+    dot: "bg-[color:#ff6b3d]",
   },
   unknown: {
     ring: "ring-[color:rgba(98,182,255,0.35)]",
     glow: "shadow-[0_0_0_1px_rgba(98,182,255,0.16),0_18px_60px_-28px_rgba(98,182,255,0.55)]",
     pill: "bg-[color:rgba(98,182,255,0.14)] text-[color:rgba(220,242,255,0.95)] ring-[color:rgba(98,182,255,0.35)]",
+    dot: "bg-[color:#62b6ff]",
   },
 };
 
@@ -51,10 +58,24 @@ export function ModuleCard(props: {
             </h2>
             <span
               className={[
-                "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset",
+                "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset",
                 styles.pill,
               ].join(" ")}
             >
+              <span className="relative flex h-2 w-2">
+                <span
+                  className={[
+                    "absolute inline-flex h-full w-full animate-ping rounded-full opacity-75",
+                    styles.dot,
+                  ].join(" ")}
+                />
+                <span
+                  className={[
+                    "relative inline-flex h-2 w-2 rounded-full",
+                    styles.dot,
+                  ].join(" ")}
+                />
+              </span>
               {props.statusText}
             </span>
           </div>
