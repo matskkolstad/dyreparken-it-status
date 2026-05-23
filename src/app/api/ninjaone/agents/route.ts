@@ -5,15 +5,19 @@ import { isDummyDataEnabled, requireEnv } from "@/lib/server/env";
 import { fetchJsonServer } from "@/lib/server/fetch";
 import type { NinjaOneAgents } from "@/lib/types";
 
-type NinjaOneDevicesResponse =
-  | { devices?: { status?: string }[] }
-  | { data?: { status?: string }[] }
-  | { status?: string }[];
+type NinjaOneDevice = { status?: string };
 
-function normalizeDeviceList(raw: NinjaOneDevicesResponse): { status?: string }[] {
+type NinjaOneDevicesResponse =
+  | { devices?: NinjaOneDevice[] }
+  | { data?: NinjaOneDevice[] }
+  | NinjaOneDevice[];
+
+function normalizeDeviceList(raw: NinjaOneDevicesResponse): NinjaOneDevice[] {
   if (Array.isArray(raw)) return raw;
-  if (Array.isArray((raw as any).devices)) return (raw as any).devices;
-  if (Array.isArray((raw as any).data)) return (raw as any).data;
+  if (Array.isArray((raw as { devices?: NinjaOneDevice[] }).devices))
+    return (raw as { devices: NinjaOneDevice[] }).devices;
+  if (Array.isArray((raw as { data?: NinjaOneDevice[] }).data))
+    return (raw as { data: NinjaOneDevice[] }).data;
   return [];
 }
 

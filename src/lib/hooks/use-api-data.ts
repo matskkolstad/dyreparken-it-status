@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { fetchJson } from "@/lib/fetch-json";
 
@@ -23,18 +23,14 @@ export function useApiData<T>(
   const [lastSuccessAt, setLastSuccessAt] = useState<string>();
 
   const mountedRef = useRef(true);
-  const refreshIndexRef = useRef(0);
+  const [refreshIndex, setRefreshIndex] = useState(0);
 
   const refresh = useCallback(() => {
-    refreshIndexRef.current += 1;
+    setRefreshIndex((i) => i + 1);
     setIsLoading(true);
   }, []);
 
-  const trigger = useMemo(
-    () => `${refreshIndexRef.current}:${refreshToken ?? 0}`,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [refreshToken, isLoading],
-  );
+  const trigger = `${refreshIndex}:${refreshToken ?? 0}`;
 
   useEffect(() => {
     mountedRef.current = true;

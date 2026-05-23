@@ -4,15 +4,21 @@ export const DEFAULT_REFRESH_INTERVAL_MS = 60_000;
 
 export const DASHBOARD_PAGES: DashboardPage[] = [
   {
-    id: "main",
-    title: "IT Systemer",
+    id: "infrastruktur",
+    title: "Infrastruktur & Nettverk",
     modules: [
       "weather",
-      "asana",
-      "monotree",
       "librenms",
       "ninjaone",
       "esper",
+    ] satisfies DashboardModuleId[],
+  },
+  {
+    id: "drift",
+    title: "Drift & Gjester",
+    modules: [
+      "asana",
+      "monotree",
       "zoined",
     ] satisfies DashboardModuleId[],
   },

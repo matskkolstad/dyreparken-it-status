@@ -5,12 +5,20 @@ import { isDummyDataEnabled, requireEnv } from "@/lib/server/env";
 import { fetchJsonServer } from "@/lib/server/fetch";
 import type { MonotreeFeed, MonotreePost } from "@/lib/types";
 
-type AnyMonotreePostsResponse =
-  | { posts?: { id?: string; title?: string; publishedAt?: string; published_at?: string; url?: string }[] }
-  | { data?: { id?: string; title?: string; publishedAt?: string; published_at?: string; url?: string }[] }
-  | { id?: string; title?: string; publishedAt?: string; published_at?: string; url?: string }[];
+type MonotreeRawPost = {
+  id?: string;
+  title?: string;
+  publishedAt?: string;
+  published_at?: string;
+  url?: string;
+};
 
-function normalizePost(p: any, index: number): MonotreePost {
+type AnyMonotreePostsResponse =
+  | { posts?: MonotreeRawPost[] }
+  | { data?: MonotreeRawPost[] }
+  | MonotreeRawPost[];
+
+function normalizePost(p: MonotreeRawPost, index: number): MonotreePost {
   const publishedAt = p?.publishedAt ?? p?.published_at ?? new Date().toISOString();
   return {
     id: String(p?.id ?? `post-${index}`),
@@ -35,12 +43,12 @@ export async function GET() {
       : undefined,
   });
 
-  const items = Array.isArray(raw)
+  const items: MonotreeRawPost[] = Array.isArray(raw)
     ? raw
-    : Array.isArray((raw as any).posts)
-      ? (raw as any).posts
-      : Array.isArray((raw as any).data)
-        ? (raw as any).data
+    : Array.isArray((raw as { posts?: MonotreeRawPost[] }).posts)
+      ? (raw as { posts: MonotreeRawPost[] }).posts
+      : Array.isArray((raw as { data?: MonotreeRawPost[] }).data)
+        ? (raw as { data: MonotreeRawPost[] }).data
         : [];
 
   const result: MonotreeFeed = {
