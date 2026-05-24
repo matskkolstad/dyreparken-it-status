@@ -102,6 +102,17 @@ body::before {
 }
 
 @media (min-width: 1600px) and (max-height: 1100px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .dp-page-shell {
+    height: 100vh;
+    overflow: hidden;
+  }
+
   html[data-page-id="oversikt"][data-dynamic-mode="true"],
   body[data-page-id="oversikt"][data-dynamic-mode="true"] {
     overflow: hidden;
