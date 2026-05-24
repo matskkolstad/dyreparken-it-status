@@ -143,6 +143,23 @@ body::before {
     margin-top: 0.75rem;
   }
 
+  html[data-force-fit="true"] .dp-page-shell[data-page-id="oversikt"] .dp-grid,
+  html[data-force-fit="true"] .dp-page-shell[data-page-id="oversikt"] .dp-columns {
+    gap: 0.4rem;
+  }
+
+  html[data-force-fit="true"] .dp-page-shell[data-page-id="oversikt"] .dp-card {
+    padding: 0.6rem;
+  }
+
+  html[data-force-fit="true"] .dp-page-shell[data-page-id="oversikt"] .dp-card[data-module-id="weather"] .weather-temp {
+    font-size: 2.2rem;
+  }
+
+  html[data-force-fit="true"] .dp-page-shell[data-page-id="oversikt"] .module-updated {
+    display: none;
+  }
+
   .dp-page-shell[data-page-id="oversikt"] .dp-grid {
     gap: 0.6rem;
     grid-template-columns: repeat(4, minmax(0, 1fr));

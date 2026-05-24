@@ -80,7 +80,7 @@ export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean
             </div>
           ) : null}
 
-          <div className="text-xs text-white/45">
+          <div className="module-updated text-xs text-white/45">
             Oppdatert: {data?.lastUpdatedAt ? new Date(data.lastUpdatedAt).toLocaleTimeString("nb-NO") : "—"}
           </div>
         </div>

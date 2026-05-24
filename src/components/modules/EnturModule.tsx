@@ -115,7 +115,7 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
             ) : null}
           </div>
 
-          <div className="text-xs text-white/45">
+          <div className="module-updated text-xs text-white/45">
             Oppdatert: {data?.lastUpdatedAt ? new Date(data.lastUpdatedAt).toLocaleTimeString("nb-NO") : "-"}
           </div>
         </div>

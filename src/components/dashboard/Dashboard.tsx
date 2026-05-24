@@ -125,6 +125,44 @@ export function Dashboard() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
     window.dispatchEvent(new Event("resize"));
   }, [activePage.id]);
+
+  useEffect(() => {
+    if (!isClient) return;
+    let timerA: number | undefined;
+    let timerB: number | undefined;
+    let intervalId: number | undefined;
+    let stopId: number | undefined;
+
+    const checkOverflow = () => {
+      const shouldCheck = activePage.id === "oversikt" && dynamicMode;
+      if (!shouldCheck) {
+        document.body.dataset.forceFit = "false";
+        document.documentElement.dataset.forceFit = "false";
+        return;
+      }
+
+      const doc = document.documentElement;
+      const overflow = doc.scrollHeight > window.innerHeight + 2;
+      document.body.dataset.forceFit = overflow ? "true" : "false";
+      document.documentElement.dataset.forceFit = overflow ? "true" : "false";
+    };
+
+    timerA = window.setTimeout(checkOverflow, 120);
+    timerB = window.setTimeout(checkOverflow, 800);
+    intervalId = window.setInterval(checkOverflow, 1000);
+    stopId = window.setTimeout(() => {
+      if (intervalId) window.clearInterval(intervalId);
+    }, 12_000);
+    window.addEventListener("resize", checkOverflow);
+
+    return () => {
+      if (timerA) window.clearTimeout(timerA);
+      if (timerB) window.clearTimeout(timerB);
+      if (intervalId) window.clearInterval(intervalId);
+      if (stopId) window.clearTimeout(stopId);
+      window.removeEventListener("resize", checkOverflow);
+    };
+  }, [activePage.id, dynamicMode, isClient]);
   const rotationIsActive = rotationEnabled && pages.length > 1;
   const rotationIsActiveForRender = isClient ? rotationIsActive : DEFAULT_ROTATION_ENABLED;
 
