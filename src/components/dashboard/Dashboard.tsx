@@ -74,7 +74,7 @@ export function Dashboard() {
   const [pageDurationSeconds, setPageDurationSeconds] = useState(
     DEFAULT_PAGE_DURATION_SECONDS,
   );
-  const [dynamicMode, setDynamicMode] = useState(false);
+  const [dynamicMode, setDynamicMode] = useState(true);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEYS.rotationEnabled, String(rotationEnabled));

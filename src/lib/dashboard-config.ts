@@ -41,4 +41,4 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
 ];
 
 export const DEFAULT_ROTATION_ENABLED = DASHBOARD_PAGES.length > 1;
-export const DEFAULT_PAGE_DURATION_SECONDS = 20;
+export const DEFAULT_PAGE_DURATION_SECONDS = 30;

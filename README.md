@@ -10,7 +10,7 @@ Statusdashboard for IT-avdelingen i Dyreparken Kristiansand. Nettsiden samler da
 - **Automatisk oppdatering** – Henter data fra API-ene hvert minutt i produksjon (10 sekunder i utvikling)
 - **Flerside-visning** – Modulene er fordelt på flere sider som roterer automatisk
 - **Manuell kontroll** – Pause/play rotering, hopp til neste side, manuell oppdatering
-- **Roteringstimer** – Stillbar varighet per side (standard 20 sekunder)
+- **Roteringstimer** – Stillbar varighet per side (standard 30 sekunder)
 - **Animert fremdriftslinje** – Viser gjenværende tid på aktiv side
 - **Pulserende statusindikator** – Grønn/gul/rød for hver modul
 - **Dynamisk modus** – Modulene utvider seg automatisk og viser mer detaljert info
@@ -269,7 +269,7 @@ Oppdateringsintervall er miljostyrt i `src/lib/dashboard-config.ts`:
 
 ### Dynamisk modus
 
-Slas av/paa med knappen **Dynamisk** i toppbaren. I dynamisk modus:
+Slas av/paa med knappen **Dynamisk** i toppbaren (pa som standard). I dynamisk modus:
 
 - Modulene tilpasser hoyden etter innhold og skjermstorrelse
 - Enkelte moduler viser mer data (f.eks. flere bussavganger og flere offline-enheter)
