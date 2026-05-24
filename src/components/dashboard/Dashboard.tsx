@@ -120,6 +120,11 @@ export function Dashboard() {
     document.documentElement.dataset.pageId = activePage.id;
     document.documentElement.dataset.dynamicMode = dynamicMode ? "true" : "false";
   }, [activePage.id, dynamicMode]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+    window.dispatchEvent(new Event("resize"));
+  }, [activePage.id]);
   const rotationIsActive = rotationEnabled && pages.length > 1;
   const rotationIsActiveForRender = isClient ? rotationIsActive : DEFAULT_ROTATION_ENABLED;
 
