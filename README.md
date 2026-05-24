@@ -6,13 +6,15 @@ Statusdashboard for IT-avdelingen i Dyreparken Kristiansand. Nettsiden samler da
 
 ## Funksjoner
 
-- **7 moduler** – Vær, Asana, Monotree, LibreNMS, NinjaOne, Esper og Zoined
-- **Automatisk oppdatering** – Henter data fra API-ene hvert 60. sekund
-- **Flerside-visning** – Modulene er fordelt på to sider som roterer automatisk
+- **8 moduler** – Vær, Asana, Monotree, LibreNMS, NinjaOne, Esper, Zoined og Entur (bussavganger)
+- **Automatisk oppdatering** – Henter data fra API-ene hvert minutt i produksjon (10 sekunder i utvikling)
+- **Flerside-visning** – Modulene er fordelt på flere sider som roterer automatisk
 - **Manuell kontroll** – Pause/play rotering, hopp til neste side, manuell oppdatering
 - **Roteringstimer** – Stillbar varighet per side (standard 20 sekunder)
 - **Animert fremdriftslinje** – Viser gjenværende tid på aktiv side
 - **Pulserende statusindikator** – Grønn/gul/rød for hver modul
+- **Dynamisk modus** – Modulene utvider seg automatisk og viser mer detaljert info
+- **Visuell prioritering** – Kritiske avvik/offline-feil kan vises i storre kort
 - **Klokkeslett og dato** – Øverst i høyre hjørne
 - **Dummy-data-modus** – Kjør uten API-nøkler under utvikling
 
@@ -51,6 +53,11 @@ npm run dev
 
 Som standard er `DUMMY_DATA=true`, slik at alle moduler vises med testdata uten at du trenger API-nøkler.
 
+Oppdateringsfrekvensen styres av miljøet:
+
+- Utvikling: 10 sekunder
+- Produksjon: 60 sekunder
+
 ---
 
 ## Miljøvariabler
@@ -80,6 +87,10 @@ cp .env.example .env.local
 | `ESPER_API_TOKEN` | Ja* | API-token fra Esper |
 | `ZOINED_GUESTS_URL` | Ja* | URL til Zoined gjesteoversikt |
 | `ZOINED_API_KEY` | Nei | API-nøkkel for Zoined (valgfritt) |
+| `ENTUR_API_URL` | Nei | Entur GraphQL-endepunkt (standard: `https://api.entur.io/realtime/v1/graphql`) |
+| `ENTUR_CLIENT_NAME` | Ja* | Entur klientidentifikator for `ET-Client-Name` |
+| `ENTUR_STOP_PLACE_ID` | Ja* | StopPlace-ID for Dyreparken |
+| `ENTUR_MAX_DEPARTURES` | Nei | Hvor mange avganger som hentes (standard: `10`) |
 
 *Påkrevd kun når `DUMMY_DATA=false`
 
@@ -141,6 +152,16 @@ Bruker [Zoined API](https://zoined.com/zapi).
 
 Kontakt Zoined for å få tilgang til gjeste-endepunktet for din organisasjon. Svaret forventes å ha feltene `dyreparkenGuests` og `badelandGuests` (eller under et `data`-objekt).
 
+### Entur (kollektiv)
+
+Bruker Entur Real-time GraphQL API for å vise neste bussavganger fra Dyreparken.
+
+1. Sett `ENTUR_CLIENT_NAME` til en unik klientstreng (for eksempel `dyreparken-it-status-prod`)
+2. Sett `ENTUR_STOP_PLACE_ID` til riktig stoppested-ID for Dyreparken
+3. Valgfritt: overstyr `ENTUR_API_URL` eller `ENTUR_MAX_DEPARTURES`
+
+Foresporslene sendes med header `ET-Client-Name`, og modulen viser de neste relevante bussavgangene med sanntidsindikator.
+
 ---
 
 ## Deployment på Linux-server
@@ -162,14 +183,14 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
-WorkingDirectory=/opt/dyreparken-it-status
-ExecStart=/usr/bin/node server.js
-Restart=on-failure
-RestartSec=5s
+User=root
+WorkingDirectory=/root/projects/dyreparken-it-status
+ExecStartPre=/usr/bin/npm run build
+ExecStart=/usr/bin/npm run start -- --hostname 0.0.0.0 --port 3000
+Restart=always
+RestartSec=5
 Environment=NODE_ENV=production
-Environment=PORT=3000
-EnvironmentFile=/opt/dyreparken-it-status/.env.local
+EnvironmentFile=/root/projects/dyreparken-it-status/.env.local
 
 [Install]
 WantedBy=multi-user.target
@@ -213,7 +234,7 @@ server {
 3. Sikre filen:
    ```bash
    chmod 600 .env.local
-   chown www-data:www-data .env.local
+   chown root:root .env.local
    ```
 4. Start tjenesten på nytt:
    ```bash
@@ -241,7 +262,18 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
 
 ### Oppdateringsintervall
 
-Standard oppdateringsintervall er 60 sekunder. Endre `DEFAULT_REFRESH_INTERVAL_MS` i `src/lib/dashboard-config.ts`.
+Oppdateringsintervall er miljostyrt i `src/lib/dashboard-config.ts`:
+
+- Utvikling (`NODE_ENV !== production`): 10 sekunder
+- Produksjon (`NODE_ENV === production`): 60 sekunder
+
+### Dynamisk modus
+
+Slas av/paa med knappen **Dynamisk** i toppbaren. I dynamisk modus:
+
+- Modulene tilpasser hoyden etter innhold og skjermstorrelse
+- Enkelte moduler viser mer data (f.eks. flere bussavganger og flere offline-enheter)
+- Kritiske avvik kan vises i storre kort for bedre synlighet
 
 ---
 

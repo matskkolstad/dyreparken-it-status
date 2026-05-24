@@ -7,7 +7,8 @@ export type DashboardModuleId =
   | "librenms"
   | "ninjaone"
   | "esper"
-  | "zoined";
+  | "zoined"
+  | "entur";
 
 export type DashboardPage = {
   id: string;
@@ -53,14 +54,32 @@ export type LibreNmsSwitches = ApiMeta & {
 export type NinjaOneAgents = ApiMeta & {
   onlineCount: number;
   offlineCount: number;
+  offline: { name: string; status?: string }[];
 };
 
 export type EsperDevices = ApiMeta & {
   onlineCount: number;
   offlineCount: number;
+  offline: { name: string; status?: string }[];
 };
 
 export type ZoinedGuests = ApiMeta & {
   dyreparkenGuests: number;
   badelandGuests: number;
+};
+
+export type EnturDeparture = {
+  id: string;
+  line: string;
+  destination: string;
+  departureTime: string;
+  aimedDepartureTime?: string;
+  minutesUntilDeparture: number;
+  delayMinutes?: number;
+  isRealtime: boolean;
+};
+
+export type EnturDepartures = ApiMeta & {
+  stopName: string;
+  departures: EnturDeparture[];
 };

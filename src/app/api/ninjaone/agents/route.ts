@@ -5,7 +5,13 @@ import { isDummyDataEnabled, requireEnv } from "@/lib/server/env";
 import { fetchJsonServer } from "@/lib/server/fetch";
 import type { NinjaOneAgents } from "@/lib/types";
 
-type NinjaOneDevice = { status?: string };
+type NinjaOneDevice = {
+  status?: string;
+  displayName?: string;
+  systemName?: string;
+  hostname?: string;
+  name?: string;
+};
 
 type NinjaOneDevicesResponse =
   | { devices?: NinjaOneDevice[] }
@@ -27,6 +33,16 @@ function isOnline(status?: string) {
   return ["online", "connected", "up", "active"].includes(s);
 }
 
+function deviceName(device: NinjaOneDevice, index: number) {
+  return (
+    device.displayName ??
+    device.systemName ??
+    device.hostname ??
+    device.name ??
+    `Agent-${index + 1}`
+  );
+}
+
 export async function GET() {
   if (isDummyDataEnabled()) {
     return NextResponse.json(dummyNinjaOne());
@@ -44,12 +60,20 @@ export async function GET() {
   const devices = normalizeDeviceList(raw);
   const onlineCount = devices.filter((d) => isOnline(d.status)).length;
   const offlineCount = Math.max(0, devices.length - onlineCount);
+  const offline = devices
+    .filter((device) => !isOnline(device.status))
+    .slice(0, 20)
+    .map((device, index) => ({
+      name: deviceName(device, index),
+      status: device.status,
+    }));
 
   const result: NinjaOneAgents = {
     lastUpdatedAt: new Date().toISOString(),
     isDummyData: false,
     onlineCount,
     offlineCount,
+    offline,
   };
 
   return NextResponse.json(result);

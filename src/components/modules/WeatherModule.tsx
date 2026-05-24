@@ -21,13 +21,15 @@ function conditionEmoji(condition?: string) {
   return "🌤️";
 }
 
-export function WeatherModule(props: { refreshToken: number }) {
+export function WeatherModule(props: { refreshToken: number; dynamicMode?: boolean }) {
+  const dynamicMode = props.dynamicMode ?? false;
   const { data, error, isLoading } = useApiData<WeatherCurrent>("/api/weather/current", {
     intervalMs: DEFAULT_REFRESH_INTERVAL_MS,
     refreshToken: props.refreshToken,
   });
 
   const severity = error ? "unknown" : "ok";
+  const rowSpan = 1;
   const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : "Live";
 
   return (
@@ -35,6 +37,9 @@ export function WeatherModule(props: { refreshToken: number }) {
       title="Vær"
       severity={severity}
       statusText={statusText}
+      pulseKey={data?.lastUpdatedAt}
+      dynamicMode={dynamicMode}
+      rowSpan={rowSpan}
       right={
         <span className="text-2xl" aria-hidden="true">
           {conditionEmoji(data?.condition)}

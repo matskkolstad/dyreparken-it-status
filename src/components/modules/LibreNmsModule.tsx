@@ -5,6 +5,7 @@ import { Network } from "lucide-react";
 import type { LibreNmsSwitches } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
 import { useApiData } from "@/lib/hooks/use-api-data";
+import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
 function severityFromLibre(m?: LibreNmsSwitches, error?: string) {
@@ -15,13 +16,21 @@ function severityFromLibre(m?: LibreNmsSwitches, error?: string) {
   return "ok";
 }
 
-export function LibreNmsModule(props: { refreshToken: number }) {
+export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: boolean }) {
+  const dynamicMode = props.dynamicMode ?? false;
   const { data, error, isLoading } = useApiData<LibreNmsSwitches>("/api/librenms/switches", {
     intervalMs: DEFAULT_REFRESH_INTERVAL_MS,
     refreshToken: props.refreshToken,
   });
+  const offlineLimit = useDynamicListLimit(dynamicMode, 4, {
+    min: 4,
+    max: 10,
+    rowHeight: 28,
+    reservedHeight: 390,
+  });
 
   const severity = severityFromLibre(data, error);
+  const rowSpan = severity === "down" || severity === "degraded" ? 2 : 1;
   const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : "Live";
 
   return (
@@ -29,6 +38,9 @@ export function LibreNmsModule(props: { refreshToken: number }) {
       title="LibreNMS"
       severity={severity}
       statusText={statusText}
+      pulseKey={data?.lastUpdatedAt}
+      dynamicMode={dynamicMode}
+      rowSpan={rowSpan}
       right={<Network className="h-5 w-5 text-white/75" aria-hidden="true" />}
     >
       {error ? (
@@ -52,8 +64,8 @@ export function LibreNmsModule(props: { refreshToken: number }) {
 
           <div className="mt-4 flex-1 overflow-hidden rounded-2xl bg-white/5 ring-1 ring-inset ring-white/10">
             <div className="px-4 py-2 text-xs font-semibold text-white/60">Offline</div>
-            <div className="max-h-[120px] overflow-hidden px-4 pb-3">
-              {(data?.offline ?? []).slice(0, 4).map((sw) => (
+            <div className="px-4 pb-3">
+              {(data?.offline ?? []).slice(0, offlineLimit).map((sw) => (
                 <div key={sw.name} className="flex items-center justify-between py-1 text-sm text-white/85">
                   <span className="truncate">{sw.name}</span>
                   <span className="ml-3 shrink-0 text-xs text-white/55">{sw.ip ?? ""}</span>

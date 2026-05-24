@@ -1,8 +1,23 @@
 import type { DashboardModuleId, DashboardPage } from "@/lib/types";
 
-export const DEFAULT_REFRESH_INTERVAL_MS = 60_000;
+export const DEFAULT_REFRESH_INTERVAL_MS =
+  process.env.NODE_ENV === "production" ? 60_000 : 10_000;
 
 export const DASHBOARD_PAGES: DashboardPage[] = [
+  {
+    id: "oversikt",
+    title: "Full oversikt",
+    modules: [
+      "weather",
+      "asana",
+      "monotree",
+      "librenms",
+      "ninjaone",
+      "esper",
+      "zoined",
+      "entur",
+    ] satisfies DashboardModuleId[],
+  },
   {
     id: "infrastruktur",
     title: "Infrastruktur & Nettverk",
@@ -20,6 +35,7 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
       "asana",
       "monotree",
       "zoined",
+      "entur",
     ] satisfies DashboardModuleId[],
   },
 ];

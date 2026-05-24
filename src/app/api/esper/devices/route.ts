@@ -5,7 +5,15 @@ import { isDummyDataEnabled, requireEnv } from "@/lib/server/env";
 import { fetchJsonServer } from "@/lib/server/fetch";
 import type { EsperDevices } from "@/lib/types";
 
-type EsperDevice = { isOnline?: boolean; online?: boolean; status?: string };
+type EsperDevice = {
+  isOnline?: boolean;
+  online?: boolean;
+  status?: string;
+  name?: string;
+  deviceName?: string;
+  displayName?: string;
+  serial?: string;
+};
 
 type EsperDevicesResponse =
   | { devices?: EsperDevice[] }
@@ -28,6 +36,16 @@ function isOnline(device: EsperDevice) {
   return ["online", "connected", "active"].includes(s);
 }
 
+function deviceName(device: EsperDevice, index: number) {
+  return (
+    device.name ??
+    device.deviceName ??
+    device.displayName ??
+    device.serial ??
+    `Device-${index + 1}`
+  );
+}
+
 export async function GET() {
   if (isDummyDataEnabled()) {
     return NextResponse.json(dummyEsper());
@@ -45,12 +63,20 @@ export async function GET() {
   const devices = normalizeList(raw);
   const onlineCount = devices.filter(isOnline).length;
   const offlineCount = Math.max(0, devices.length - onlineCount);
+  const offline = devices
+    .filter((device) => !isOnline(device))
+    .slice(0, 20)
+    .map((device, index) => ({
+      name: deviceName(device, index),
+      status: device.status,
+    }));
 
   const result: EsperDevices = {
     lastUpdatedAt: new Date().toISOString(),
     isDummyData: false,
     onlineCount,
     offlineCount,
+    offline,
   };
 
   return NextResponse.json(result);

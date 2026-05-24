@@ -1,0 +1,143 @@
+import { NextResponse } from "next/server";
+
+import { dummyEntur } from "@/lib/dummy-data";
+import { isDummyDataEnabled, requireEnv } from "@/lib/server/env";
+import { fetchJsonServer } from "@/lib/server/fetch";
+import type { EnturDepartures, EnturDeparture } from "@/lib/types";
+
+type EnturGraphqlResponse = {
+  data?: {
+    stopPlace?: {
+      name?: string;
+      estimatedCalls?: Array<{
+        aimedDepartureTime?: string;
+        expectedDepartureTime?: string;
+        realtime?: boolean;
+        destinationDisplay?: { frontText?: string };
+        serviceJourney?: {
+          journeyPattern?: {
+            line?: {
+              publicCode?: string;
+            };
+          };
+        };
+      }>;
+    };
+  };
+  errors?: Array<{ message?: string }>;
+};
+
+const ENTUR_QUERY = `
+query GetDepartures($stopPlaceId: String!, $maxDepartures: Int!) {
+  stopPlace(id: $stopPlaceId) {
+    name
+    estimatedCalls(numberOfDepartures: $maxDepartures, whiteListedModes: [bus]) {
+      aimedDepartureTime
+      expectedDepartureTime
+      realtime
+      destinationDisplay {
+        frontText
+      }
+      serviceJourney {
+        journeyPattern {
+          line {
+            publicCode
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
+function toMinutesUntilDeparture(isoTime?: string) {
+  if (!isoTime) return Number.POSITIVE_INFINITY;
+  const departureMs = Date.parse(isoTime);
+  if (!Number.isFinite(departureMs)) return Number.POSITIVE_INFINITY;
+  return Math.ceil((departureMs - Date.now()) / 60_000);
+}
+
+function toDelayMinutes(expectedIso?: string, aimedIso?: string) {
+  if (!expectedIso || !aimedIso) return 0;
+  const expectedMs = Date.parse(expectedIso);
+  const aimedMs = Date.parse(aimedIso);
+  if (!Number.isFinite(expectedMs) || !Number.isFinite(aimedMs)) return 0;
+  return Math.max(0, Math.round((expectedMs - aimedMs) / 60_000));
+}
+
+function mapDeparture(
+  raw: NonNullable<
+    NonNullable<NonNullable<EnturGraphqlResponse["data"]>["stopPlace"]>["estimatedCalls"]
+  >[number],
+  index: number,
+): EnturDeparture | null {
+  const departureTime = raw.expectedDepartureTime ?? raw.aimedDepartureTime;
+  const minutesUntilDeparture = toMinutesUntilDeparture(departureTime);
+  const delayMinutes = toDelayMinutes(raw.expectedDepartureTime, raw.aimedDepartureTime);
+  if (!Number.isFinite(minutesUntilDeparture) || minutesUntilDeparture < 0) {
+    return null;
+  }
+
+  const line = raw.serviceJourney?.journeyPattern?.line?.publicCode ?? "-";
+  const destination = raw.destinationDisplay?.frontText ?? "Ukjent destinasjon";
+
+  return {
+    id: `${line}-${destination}-${index}`,
+    line,
+    destination,
+    departureTime: departureTime!,
+    aimedDepartureTime: raw.aimedDepartureTime,
+    minutesUntilDeparture,
+    delayMinutes,
+    isRealtime: Boolean(raw.realtime),
+  };
+}
+
+export async function GET() {
+  if (isDummyDataEnabled()) {
+    return NextResponse.json(dummyEntur());
+  }
+
+  const stopPlaceId = requireEnv("ENTUR_STOP_PLACE_ID");
+  const clientName = requireEnv("ENTUR_CLIENT_NAME");
+  const endpoint = process.env.ENTUR_API_URL ?? "https://api.entur.io/realtime/v1/graphql";
+  const maxDepartures = Number(process.env.ENTUR_MAX_DEPARTURES ?? "10");
+
+  const response = await fetchJsonServer<EnturGraphqlResponse>(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "ET-Client-Name": clientName,
+    },
+    body: JSON.stringify({
+      query: ENTUR_QUERY,
+      variables: {
+        stopPlaceId,
+        maxDepartures: Number.isFinite(maxDepartures) && maxDepartures > 0 ? maxDepartures : 10,
+      },
+    }),
+  });
+
+  if (response.errors?.length) {
+    const messages = response.errors
+      .map((error) => error.message)
+      .filter((message): message is string => Boolean(message));
+    throw new Error(`Entur GraphQL error: ${messages.join("; ") || "Unknown error"}`);
+  }
+
+  const stopName = response.data?.stopPlace?.name ?? "Dyreparken";
+  const departures = (response.data?.stopPlace?.estimatedCalls ?? [])
+    .map(mapDeparture)
+    .filter((departure): departure is EnturDeparture => departure !== null)
+    .sort((a, b) => a.minutesUntilDeparture - b.minutesUntilDeparture)
+    .slice(0, 6);
+
+  const result: EnturDepartures = {
+    lastUpdatedAt: new Date().toISOString(),
+    isDummyData: false,
+    stopName,
+    departures,
+  };
+
+  return NextResponse.json(result);
+}

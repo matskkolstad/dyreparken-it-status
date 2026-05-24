@@ -36,19 +36,29 @@ export function ModuleCard(props: {
   title: string;
   severity: ModuleSeverity;
   statusText: string;
+  subtitle?: ReactNode;
   right?: ReactNode;
+  pulseKey?: string;
+  dynamicMode?: boolean;
+  rowSpan?: number;
   children: ReactNode;
 }) {
   const styles = severityStyles[props.severity];
+  const dynamicMode = props.dynamicMode ?? false;
+  const rowSpan = Math.max(1, Math.round(props.rowSpan ?? 1));
   return (
     <section
       className={[
-        "h-full rounded-2xl bg-[color:var(--card)] ring-1 ring-inset backdrop-blur-md",
+        "dp-card break-inside-avoid",
+        dynamicMode
+          ? "rounded-2xl bg-[color:var(--card)] ring-1 ring-inset"
+          : "h-full rounded-2xl bg-[color:var(--card)] ring-1 ring-inset",
         "px-5 py-5 md:px-6 md:py-6",
-        "transition-shadow duration-300",
         styles.ring,
-        styles.glow,
+        "shadow-[0_0_0_1px_rgba(255,255,255,0.04)]",
       ].join(" ")}
+      style={{ "--dp-row-span": rowSpan } as React.CSSProperties}
+      data-row-span={rowSpan}
     >
       <header className="flex items-start justify-between gap-4">
         <div className="min-w-0">
@@ -65,12 +75,6 @@ export function ModuleCard(props: {
               <span className="relative flex h-2 w-2">
                 <span
                   className={[
-                    "absolute inline-flex h-full w-full animate-ping rounded-full opacity-75",
-                    styles.dot,
-                  ].join(" ")}
-                />
-                <span
-                  className={[
                     "relative inline-flex h-2 w-2 rounded-full",
                     styles.dot,
                   ].join(" ")}
@@ -79,10 +83,20 @@ export function ModuleCard(props: {
               {props.statusText}
             </span>
           </div>
+          {props.subtitle ? (
+            <div className="mt-1 text-xs text-white/55">{props.subtitle}</div>
+          ) : null}
         </div>
         {props.right ? <div className="shrink-0">{props.right}</div> : null}
       </header>
-      <div className="mt-4 h-[calc(100%-3.25rem)]">{props.children}</div>
+      <div className={dynamicMode ? "mt-4" : "mt-4 h-[calc(100%-3.25rem)]"}>
+        <div
+          key={props.pulseKey ?? "stable"}
+          className={dynamicMode ? "animate-monotree-scroll" : "h-full animate-monotree-scroll"}
+        >
+          {props.children}
+        </div>
+      </div>
     </section>
   );
 }
