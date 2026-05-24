@@ -27,6 +27,7 @@ export function AsanaModule(props: { refreshToken: number; dynamicMode?: boolean
 
   return (
     <ModuleCard
+      moduleId="asana"
       title="Asana"
       severity={severity}
       statusText={statusText}
@@ -61,7 +62,7 @@ export function AsanaModule(props: { refreshToken: number; dynamicMode?: boolean
           </div>
 
           {dynamicMode ? (
-            <div className="mt-4 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
+            <div className="asana-workload mt-4 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
               <div className="text-xs text-white/65">Arbeidstrykk</div>
               <div className="mt-1 text-sm text-white/85">
                 {(data?.activeCount ?? 0) > 25
@@ -73,7 +74,7 @@ export function AsanaModule(props: { refreshToken: number; dynamicMode?: boolean
             </div>
           ) : null}
 
-          <div className="text-xs text-white/45">
+          <div className="asana-updated text-xs text-white/45">
             Oppdatert: {data?.lastUpdatedAt ? new Date(data.lastUpdatedAt).toLocaleTimeString("nb-NO") : "—"}
           </div>
         </div>

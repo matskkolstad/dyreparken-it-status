@@ -55,6 +55,7 @@ export function MonotreeModule(props: { refreshToken: number; dynamicMode?: bool
 
   return (
     <ModuleCard
+      moduleId="monotree"
       title="Monotree"
       severity={severity}
       statusText={statusText}

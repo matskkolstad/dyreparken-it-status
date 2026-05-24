@@ -35,6 +35,7 @@ export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean
 
   return (
     <ModuleCard
+      moduleId="esper"
       title="Esper"
       severity={severity}
       statusText={statusText}

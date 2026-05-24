@@ -275,6 +275,15 @@ Slas av/paa med knappen **Dynamisk** i toppbaren. I dynamisk modus:
 - Enkelte moduler viser mer data (f.eks. flere bussavganger og flere offline-enheter)
 - Kritiske avvik kan vises i storre kort for bedre synlighet
 
+### Skjermoppsett (1920x1080)
+
+Full oversikt er optimalisert for 1920x1080 og viser alle 8 moduler samtidig uten scrolling:
+
+- I vanlig modus brukes et 4x2 rutenett
+- I dynamisk modus brukes et fast 4x2 oppsett for oversikten og innholdet komprimeres for aa passe
+
+For produksjon (systemd) ma du kjore `npm run build` og restarte tjenesten for at layoutendringer skal vises.
+
 ---
 
 ## Utvikling

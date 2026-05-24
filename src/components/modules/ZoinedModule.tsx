@@ -20,6 +20,7 @@ export function ZoinedModule(props: { refreshToken: number; dynamicMode?: boolea
 
   return (
     <ModuleCard
+      moduleId="zoined"
       title="Zoined"
       severity={severity}
       statusText={statusText}
@@ -48,7 +49,7 @@ export function ZoinedModule(props: { refreshToken: number; dynamicMode?: boolea
           </div>
 
           {dynamicMode ? (
-            <div className="mt-4 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
+            <div className="zoined-total mt-4 rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
               <div className="text-xs text-white/65">Totalt gjester</div>
               <div className="mt-1 text-2xl font-semibold text-white/95">
                 {(data?.dyreparkenGuests ?? 0) + (data?.badelandGuests ?? 0)}
@@ -56,7 +57,7 @@ export function ZoinedModule(props: { refreshToken: number; dynamicMode?: boolea
             </div>
           ) : null}
 
-          <div className="text-xs text-white/45">
+          <div className="zoined-updated text-xs text-white/45">
             Oppdatert: {data?.lastUpdatedAt ? new Date(data.lastUpdatedAt).toLocaleTimeString("nb-NO") : "—"}
           </div>
         </div>

@@ -35,6 +35,7 @@ export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: bool
 
   return (
     <ModuleCard
+      moduleId="librenms"
       title="LibreNMS"
       severity={severity}
       statusText={statusText}

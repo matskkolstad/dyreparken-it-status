@@ -35,6 +35,7 @@ export function NinjaOneModule(props: { refreshToken: number; dynamicMode?: bool
 
   return (
     <ModuleCard
+      moduleId="ninjaone"
       title="NinjaOne"
       severity={severity}
       statusText={statusText}

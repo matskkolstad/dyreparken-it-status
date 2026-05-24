@@ -72,6 +72,7 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
 
   return (
     <ModuleCard
+       moduleId="entur"
       title="Kollektiv"
       subtitle={data?.stopName ? `Stopp: ${data.stopName}` : undefined}
       severity={severity}

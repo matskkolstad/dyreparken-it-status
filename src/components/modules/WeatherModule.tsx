@@ -35,6 +35,7 @@ export function WeatherModule(props: { refreshToken: number; dynamicMode?: boole
   return (
     <ModuleCard
       title="Vær"
+      moduleId="weather"
       severity={severity}
       statusText={statusText}
       pulseKey={data?.lastUpdatedAt}
@@ -52,7 +53,7 @@ export function WeatherModule(props: { refreshToken: number; dynamicMode?: boole
         <div className="flex h-full flex-col justify-between">
           <div>
             <div className="text-sm text-white/55">{data?.locationName ?? "—"}</div>
-            <div className="mt-1 text-6xl font-bold tracking-tight text-white/95">
+            <div className="weather-temp mt-1 text-6xl font-bold tracking-tight text-white/95">
               {isLoading ? "…" : `${data?.temperatureC ?? "—"}°`}
             </div>
             <div className="mt-2 text-lg font-semibold text-white/80">
@@ -60,7 +61,7 @@ export function WeatherModule(props: { refreshToken: number; dynamicMode?: boole
             </div>
           </div>
 
-          <div className="flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
+          <div className="weather-wind flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
             <div className="text-sm text-white/60">Vind</div>
             <div className="flex items-center gap-2 text-sm font-semibold text-white/90">
               <Wind className="h-4 w-4 text-white/60" aria-hidden="true" />

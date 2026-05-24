@@ -125,8 +125,12 @@ export function Dashboard() {
   }, [pageDurationSeconds, pages.length, rotationIsActive, activePageIndex]);
 
   return (
-    <div className="min-h-screen w-full px-5 py-5 md:px-9 md:py-8">
-      <header className="flex items-start justify-between gap-6">
+    <div
+      className="dp-page-shell min-h-screen w-full px-5 py-5 md:px-9 md:py-8"
+      data-page-id={activePage.id}
+      data-dynamic-mode={dynamicMode ? "true" : "false"}
+    >
+      <header className="dp-page-header flex items-start justify-between gap-6">
         {/* Branding */}
         <div className="min-w-0">
           <div className="flex items-center gap-3">
@@ -278,13 +282,13 @@ export function Dashboard() {
             </div>
 
             {dynamicMode ? (
-              <div className="dp-columns mt-4 columns-1 md:columns-2 xl:columns-3 [column-fill:_balance]">
+              <div className="dp-page-content dp-columns mt-4 columns-1 md:columns-2 xl:columns-3 [column-fill:_balance]">
                 {activePage.modules.map((id) =>
                   cloneElement(renderModule(id, refreshToken, true), { key: id }),
                 )}
               </div>
             ) : (
-              <div className="dp-grid mt-4 grid gap-4 md:gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-[240px] md:auto-rows-[260px]">
+              <div className="dp-page-content dp-grid mt-4 grid gap-4 md:gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-[240px] md:auto-rows-[260px]">
                 {activePage.modules.map((id) =>
                   cloneElement(renderModule(id, refreshToken, false), { key: id }),
                 )}
@@ -294,7 +298,7 @@ export function Dashboard() {
         </AnimatePresence>
       </div>
 
-      <footer className="mt-6 text-xs text-white/35">
+      <footer className="dp-page-footer mt-6 text-xs text-white/35">
         Auto-oppdatering: {Math.round(DEFAULT_REFRESH_INTERVAL_MS / 1000)}s •{" "}
         {new Date().getFullYear()} Dyreparken Kristiansand
       </footer>

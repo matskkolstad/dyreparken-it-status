@@ -450,7 +450,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
       {
         id: "entur-4",
         line: "200",
-        destination: "Sogne",
+        destination: "Søgne",
         departureTime: new Date(Date.now() + 21 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 21,
         isRealtime: true,
@@ -487,7 +487,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
       {
         id: "entur-8",
         line: "200",
-        destination: "Sogne",
+        destination: "Søgne",
         departureTime: new Date(Date.now() + 20 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 20,
         isRealtime: true,
@@ -524,7 +524,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
       {
         id: "entur-12",
         line: "200",
-        destination: "Sogne",
+        destination: "Søgne",
         departureTime: new Date(Date.now() + 24 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 24,
         isRealtime: false,
@@ -561,7 +561,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
       {
         id: "entur-16",
         line: "200",
-        destination: "Sogne",
+        destination: "Søgne",
         departureTime: new Date(Date.now() + 27 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 27,
         isRealtime: true,

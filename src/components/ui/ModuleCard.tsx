@@ -33,6 +33,7 @@ const severityStyles: Record<
 };
 
 export function ModuleCard(props: {
+  moduleId?: string;
   title: string;
   severity: ModuleSeverity;
   statusText: string;
@@ -59,6 +60,7 @@ export function ModuleCard(props: {
       ].join(" ")}
       style={{ "--dp-row-span": rowSpan } as React.CSSProperties}
       data-row-span={rowSpan}
+      data-module-id={props.moduleId}
     >
       <header className="flex items-start justify-between gap-4">
         <div className="min-w-0">
