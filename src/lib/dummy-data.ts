@@ -6,6 +6,7 @@ import type {
   MonotreeFeed,
   NinjaOneAgents,
   WeatherCurrent,
+  OpeningHours,
   ZoinedGuests,
 } from "@/lib/types";
 
@@ -50,11 +51,142 @@ export const dummyWeather = (): WeatherCurrent => ({
   ...weatherSamples[cycleIndex(weatherSamples.length)]!,
 });
 
+export const dummyOpeningHours = (): OpeningHours => ({
+  ...meta(),
+  dyreparken: "10:00 - 18:00",
+  badeland: "10:00 - 19:00",
+  sourceUrl: "https://www.dyreparken.no/apningstider-og-priser/",
+});
+
 const asanaSamples: Omit<AsanaMetrics, keyof ReturnType<typeof meta>>[] = [
-  { activeCount: 14, newTodayCount: 3, closedLast7DaysCount: 9 },
-  { activeCount: 18, newTodayCount: 5, closedLast7DaysCount: 12 },
-  { activeCount: 11, newTodayCount: 1, closedLast7DaysCount: 15 },
-  { activeCount: 22, newTodayCount: 4, closedLast7DaysCount: 7 },
+  {
+    activeCount: 14,
+    newTodayCount: 3,
+    closedLast7DaysCount: 9,
+    latestTasks: [
+      {
+        id: "task-1",
+        name: "Oppdatere adgangskort for ny sesong",
+        createdAt: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-2",
+        name: "Klargjore WiFi AP i Kardemomme By",
+        createdAt: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-3",
+        name: "Sjekk overvaking i Dyreparkhotellet",
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-4",
+        name: "Opprette konto til ny sesongleder",
+        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-5",
+        name: "Planlegge patch av kiosksystem",
+        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
+  {
+    activeCount: 18,
+    newTodayCount: 5,
+    closedLast7DaysCount: 12,
+    latestTasks: [
+      {
+        id: "task-6",
+        name: "Oppdatere printerdrivere administrasjon",
+        createdAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-7",
+        name: "Teste failover for fiberlinje",
+        createdAt: new Date(Date.now() - 55 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-8",
+        name: "Legge til nye kameraer i Zoined",
+        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-9",
+        name: "Oppdatere info til vertskap",
+        createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-10",
+        name: "Sjekk status pa kiosknettverk",
+        createdAt: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
+  {
+    activeCount: 11,
+    newTodayCount: 1,
+    closedLast7DaysCount: 15,
+    latestTasks: [
+      {
+        id: "task-11",
+        name: "Opprette gjestekonto for arrangement",
+        createdAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-12",
+        name: "Oppfolging av billetteringsfeil",
+        createdAt: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-13",
+        name: "Oppdatere nettverk i Dyreparkcamp",
+        createdAt: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-14",
+        name: "Planlegge endpoint-oppgradering",
+        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-15",
+        name: "Sjekk backup for POS",
+        createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
+  {
+    activeCount: 22,
+    newTodayCount: 4,
+    closedLast7DaysCount: 7,
+    latestTasks: [
+      {
+        id: "task-16",
+        name: "Patch av domenekontrollere",
+        createdAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-17",
+        name: "Kontrollere WiFi i akvariet",
+        createdAt: new Date(Date.now() - 70 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-18",
+        name: "Oppgradere kioskapper",
+        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-19",
+        name: "Oppdatere rutine for vakttelefon",
+        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "task-20",
+        name: "Sjekk av overvaking i Vestkanten",
+        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
 ];
 
 export const dummyAsana = (): AsanaMetrics => ({
@@ -373,15 +505,17 @@ const esperSamples: Omit<EsperDevices, keyof ReturnType<typeof meta>>[] = [
   {
     onlineCount: 54,
     offlineCount: 1,
-    offline: [{ name: "TAB-ENTRANCE-3", status: "offline" }],
+    offline: [
+      { name: "TAB-ENTRANCE-3", lastSeenAt: new Date(Date.now() - 9 * 60 * 1000).toISOString() },
+    ],
   },
   {
     onlineCount: 52,
     offlineCount: 3,
     offline: [
-      { name: "TAB-ENTRANCE-3", status: "offline" },
-      { name: "KIOSK-TAB-8", status: "disconnected" },
-      { name: "STAFF-TAB-2", status: "offline" },
+      { name: "TAB-ENTRANCE-3", lastSeenAt: new Date(Date.now() - 14 * 60 * 1000).toISOString() },
+      { name: "KIOSK-TAB-8", lastSeenAt: new Date(Date.now() - 22 * 60 * 1000).toISOString() },
+      { name: "STAFF-TAB-2", lastSeenAt: new Date(Date.now() - 35 * 60 * 1000).toISOString() },
     ],
   },
   {
@@ -393,11 +527,11 @@ const esperSamples: Omit<EsperDevices, keyof ReturnType<typeof meta>>[] = [
     onlineCount: 50,
     offlineCount: 5,
     offline: [
-      { name: "TAB-ENTRANCE-3", status: "offline" },
-      { name: "KIOSK-TAB-8", status: "disconnected" },
-      { name: "STAFF-TAB-2", status: "offline" },
-      { name: "TAB-FOODCOURT-1", status: "offline" },
-      { name: "TAB-FOODCOURT-2", status: "offline" },
+      { name: "TAB-ENTRANCE-3", lastSeenAt: new Date(Date.now() - 12 * 60 * 1000).toISOString() },
+      { name: "KIOSK-TAB-8", lastSeenAt: new Date(Date.now() - 28 * 60 * 1000).toISOString() },
+      { name: "STAFF-TAB-2", lastSeenAt: new Date(Date.now() - 42 * 60 * 1000).toISOString() },
+      { name: "TAB-FOODCOURT-1", lastSeenAt: new Date(Date.now() - 55 * 60 * 1000).toISOString() },
+      { name: "TAB-FOODCOURT-2", lastSeenAt: new Date(Date.now() - 70 * 60 * 1000).toISOString() },
     ],
   },
 ];
@@ -427,6 +561,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-1",
         line: "M1",
         destination: "Kvadraturen",
+        stopName: "Dyreparken E18",
         departureTime: new Date(Date.now() + 3 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 3,
         isRealtime: true,
@@ -435,6 +570,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-2",
         line: "100",
         destination: "Lillesand",
+        stopName: "Dyreparken fv. 420",
         departureTime: new Date(Date.now() + 9 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 9,
         isRealtime: false,
@@ -443,6 +579,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-3",
         line: "M1",
         destination: "Universitetet",
+        stopName: "Dyreparken E18",
         departureTime: new Date(Date.now() + 14 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 14,
         isRealtime: true,
@@ -451,6 +588,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-4",
         line: "200",
         destination: "Søgne",
+        stopName: "Dyreparken fv. 420",
         departureTime: new Date(Date.now() + 21 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 21,
         isRealtime: true,
@@ -464,6 +602,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-5",
         line: "M1",
         destination: "Kvadraturen",
+        stopName: "Dyreparken E18",
         departureTime: new Date(Date.now() + 1 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 1,
         isRealtime: true,
@@ -472,6 +611,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-6",
         line: "100",
         destination: "Lillesand",
+        stopName: "Dyreparken fv. 420",
         departureTime: new Date(Date.now() + 6 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 6,
         isRealtime: true,
@@ -480,6 +620,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-7",
         line: "M1",
         destination: "Universitetet",
+        stopName: "Dyreparken E18",
         departureTime: new Date(Date.now() + 12 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 12,
         isRealtime: false,
@@ -488,6 +629,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-8",
         line: "200",
         destination: "Søgne",
+        stopName: "Dyreparken fv. 420",
         departureTime: new Date(Date.now() + 20 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 20,
         isRealtime: true,
@@ -501,6 +643,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-9",
         line: "M1",
         destination: "Kvadraturen",
+        stopName: "Dyreparken E18",
         departureTime: new Date(Date.now() + 4 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 4,
         isRealtime: false,
@@ -509,6 +652,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-10",
         line: "100",
         destination: "Lillesand",
+        stopName: "Dyreparken fv. 420",
         departureTime: new Date(Date.now() + 11 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 11,
         isRealtime: true,
@@ -517,6 +661,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-11",
         line: "M1",
         destination: "Universitetet",
+        stopName: "Dyreparken E18",
         departureTime: new Date(Date.now() + 18 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 18,
         isRealtime: true,
@@ -525,6 +670,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-12",
         line: "200",
         destination: "Søgne",
+        stopName: "Dyreparken fv. 420",
         departureTime: new Date(Date.now() + 24 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 24,
         isRealtime: false,
@@ -538,6 +684,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-13",
         line: "M1",
         destination: "Kvadraturen",
+        stopName: "Dyreparken E18",
         departureTime: new Date(Date.now() + 2 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 2,
         isRealtime: true,
@@ -546,6 +693,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-14",
         line: "100",
         destination: "Lillesand",
+        stopName: "Dyreparken fv. 420",
         departureTime: new Date(Date.now() + 8 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 8,
         isRealtime: false,
@@ -554,6 +702,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-15",
         line: "M1",
         destination: "Universitetet",
+        stopName: "Dyreparken E18",
         departureTime: new Date(Date.now() + 13 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 13,
         isRealtime: true,
@@ -562,6 +711,7 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
         id: "entur-16",
         line: "200",
         destination: "Søgne",
+        stopName: "Dyreparken fv. 420",
         departureTime: new Date(Date.now() + 27 * 60 * 1000).toISOString(),
         minutesUntilDeparture: 27,
         isRealtime: true,

@@ -97,6 +97,7 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
                     Linje {departure.line}
                   </div>
                   <div className="mt-1 truncate text-sm text-white/90">{departure.destination}</div>
+                  <div className="truncate text-xs text-white/55">{departure.stopName}</div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-semibold text-white/95">

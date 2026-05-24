@@ -32,6 +32,14 @@ export type AsanaMetrics = ApiMeta & {
   activeCount: number;
   newTodayCount: number;
   closedLast7DaysCount: number;
+  latestTasks: AsanaTaskSummary[];
+};
+
+export type AsanaTaskSummary = {
+  id: string;
+  name: string;
+  createdAt: string;
+  url?: string;
 };
 
 export type MonotreePost = {
@@ -60,7 +68,7 @@ export type NinjaOneAgents = ApiMeta & {
 export type EsperDevices = ApiMeta & {
   onlineCount: number;
   offlineCount: number;
-  offline: { name: string; status?: string }[];
+  offline: { name: string; lastSeenAt?: string }[];
 };
 
 export type ZoinedGuests = ApiMeta & {
@@ -72,6 +80,7 @@ export type EnturDeparture = {
   id: string;
   line: string;
   destination: string;
+  stopName: string;
   departureTime: string;
   aimedDepartureTime?: string;
   minutesUntilDeparture: number;
@@ -82,4 +91,10 @@ export type EnturDeparture = {
 export type EnturDepartures = ApiMeta & {
   stopName: string;
   departures: EnturDeparture[];
+};
+
+export type OpeningHours = ApiMeta & {
+  dyreparken: string;
+  badeland: string;
+  sourceUrl: string;
 };

@@ -10,8 +10,9 @@ import {
   DEFAULT_REFRESH_INTERVAL_MS,
   DEFAULT_ROTATION_ENABLED,
 } from "@/lib/dashboard-config";
-import type { DashboardModuleId } from "@/lib/types";
+import type { DashboardModuleId, OpeningHours, WeatherCurrent } from "@/lib/types";
 import { useNow } from "@/lib/hooks/use-now";
+import { useApiData } from "@/lib/hooks/use-api-data";
 
 import { AsanaModule } from "@/components/modules/AsanaModule";
 import { EnturModule } from "@/components/modules/EnturModule";
@@ -55,6 +56,74 @@ function formatDate(now: Date) {
   });
 }
 
+function WeatherWidget(props: { refreshToken: number }) {
+  const { data, error, isLoading } = useApiData<WeatherCurrent>("/api/weather/current", {
+    intervalMs: DEFAULT_REFRESH_INTERVAL_MS,
+    refreshToken: props.refreshToken,
+  });
+
+  if (error) {
+    return (
+      <div className="dp-header-widget rounded-2xl bg-white/5 px-4 py-2 text-sm text-white/55 ring-1 ring-inset ring-white/10">
+        Vær: feil
+      </div>
+    );
+  }
+
+  return (
+    <div className="dp-header-widget rounded-2xl bg-white/5 px-4 py-2 ring-1 ring-inset ring-white/10">
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-white/45">
+        Vær
+        <span className="h-1.5 w-1.5 rounded-full bg-[color:#0fb889]" aria-hidden="true" />
+      </div>
+      <div className="mt-1 flex items-baseline gap-2">
+        <div className="text-lg font-semibold text-white/95">
+          {isLoading ? "…" : `${data?.temperatureC ?? "—"}°`}
+        </div>
+        <div className="text-xs text-white/60">
+          {data?.condition ?? "—"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OpeningHoursWidget(props: { refreshToken: number }) {
+  const { data, error, isLoading } = useApiData<OpeningHours>("/api/opening-hours", {
+    intervalMs: DEFAULT_REFRESH_INTERVAL_MS,
+    refreshToken: props.refreshToken,
+  });
+
+  if (error) {
+    return (
+      <div className="dp-header-widget rounded-2xl bg-white/5 px-4 py-2 text-sm text-white/55 ring-1 ring-inset ring-white/10">
+        Åpningstider: feil
+      </div>
+    );
+  }
+
+  return (
+    <div className="dp-header-widget rounded-2xl bg-white/5 px-4 py-2 ring-1 ring-inset ring-white/10">
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-white/45">
+        Åpningstider
+        <span className="h-1.5 w-1.5 rounded-full bg-[color:#62b6ff]" aria-hidden="true" />
+      </div>
+      <div className="mt-1 flex items-center justify-between gap-3 text-xs text-white/80">
+        <span className="text-white/60">Dyreparken</span>
+        <span className="font-semibold text-white/90">
+          {isLoading ? "…" : data?.dyreparken ?? "—"}
+        </span>
+      </div>
+      <div className="mt-0.5 flex items-center justify-between gap-3 text-xs text-white/80">
+        <span className="text-white/60">Badeland</span>
+        <span className="font-semibold text-white/90">
+          {isLoading ? "…" : data?.badeland ?? "—"}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 const STORAGE_KEYS = {
   rotationEnabled: "dp.status.rotationEnabled",
   pageDurationSeconds: "dp.status.pageDurationSeconds",
@@ -75,6 +144,7 @@ export function Dashboard() {
     DEFAULT_PAGE_DURATION_SECONDS,
   );
   const [dynamicMode, setDynamicMode] = useState(true);
+  const [controlsHidden, setControlsHidden] = useState(false);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEYS.rotationEnabled, String(rotationEnabled));
@@ -120,6 +190,40 @@ export function Dashboard() {
     document.documentElement.dataset.pageId = activePage.id;
     document.documentElement.dataset.dynamicMode = dynamicMode ? "true" : "false";
   }, [activePage.id, dynamicMode]);
+
+  useEffect(() => {
+    document.body.dataset.controlsHidden = controlsHidden ? "true" : "false";
+    document.documentElement.dataset.controlsHidden = controlsHidden ? "true" : "false";
+  }, [controlsHidden]);
+
+  useEffect(() => {
+    if (!isClient) return;
+    let idleTimer: number | undefined;
+
+    const setIdleTimer = () => {
+      if (idleTimer) window.clearTimeout(idleTimer);
+      idleTimer = window.setTimeout(() => setControlsHidden(true), 10_000);
+    };
+
+    const markActive = () => {
+      setControlsHidden(false);
+      setIdleTimer();
+    };
+
+    markActive();
+    window.addEventListener("mousemove", markActive, { passive: true });
+    window.addEventListener("mousedown", markActive, { passive: true });
+    window.addEventListener("keydown", markActive);
+    window.addEventListener("touchstart", markActive, { passive: true });
+
+    return () => {
+      if (idleTimer) window.clearTimeout(idleTimer);
+      window.removeEventListener("mousemove", markActive);
+      window.removeEventListener("mousedown", markActive);
+      window.removeEventListener("keydown", markActive);
+      window.removeEventListener("touchstart", markActive);
+    };
+  }, [isClient]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
@@ -179,6 +283,7 @@ export function Dashboard() {
       className="dp-page-shell min-h-screen w-full px-5 py-5 md:px-9 md:py-8"
       data-page-id={activePage.id}
       data-dynamic-mode={dynamicMode ? "true" : "false"}
+      data-controls-hidden={controlsHidden ? "true" : "false"}
     >
       <header className="dp-page-header flex items-start justify-between gap-6">
         {/* Branding */}
@@ -202,7 +307,7 @@ export function Dashboard() {
         <div className="flex items-center gap-3 shrink-0">
           {isClient ? (
             <>
-              <div className="hidden md:flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 ring-1 ring-inset ring-white/10">
+              <div className="dp-controls-hideable hidden md:flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 ring-1 ring-inset ring-white/10">
                 <Timer className="h-4 w-4 text-white/70" aria-hidden="true" />
                 <input
                   className="w-12 bg-transparent text-right text-sm font-semibold text-white/90 outline-none"
@@ -219,7 +324,7 @@ export function Dashboard() {
 
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors"
+                className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors"
                 onClick={() => setRotationEnabled((v) => !v)}
                 aria-pressed={rotationEnabled}
               >
@@ -238,7 +343,7 @@ export function Dashboard() {
 
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors disabled:opacity-40"
+                className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors disabled:opacity-40"
                 onClick={() => setActivePageIndex((i) => (i + 1) % pages.length)}
                 disabled={pages.length < 2}
               >
@@ -248,7 +353,7 @@ export function Dashboard() {
 
               <button
                 type="button"
-                className="inline-flex items-center gap-2 rounded-full bg-[color:rgba(15,184,137,0.16)] px-4 py-2 text-sm font-semibold text-white/95 ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)] hover:bg-[color:rgba(15,184,137,0.22)] transition-colors"
+                className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-[color:rgba(15,184,137,0.16)] px-4 py-2 text-sm font-semibold text-white/95 ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)] hover:bg-[color:rgba(15,184,137,0.22)] transition-colors"
                 onClick={() => setRefreshToken((t) => t + 1)}
               >
                 <RefreshCw className="h-4 w-4" aria-hidden="true" />
@@ -258,6 +363,7 @@ export function Dashboard() {
               <button
                 type="button"
                 className={[
+                  "dp-controls-hideable",
                   "inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-inset transition-colors",
                   dynamicMode
                     ? "bg-[color:rgba(98,182,255,0.16)] text-white/95 ring-[color:rgba(98,182,255,0.35)] hover:bg-[color:rgba(98,182,255,0.24)]"
@@ -269,13 +375,21 @@ export function Dashboard() {
                 Dynamisk
               </button>
 
-              {/* Clock */}
-              <div className="ml-1 rounded-2xl bg-white/5 px-5 py-2 text-right ring-1 ring-inset ring-white/10 min-w-[130px]">
-                <div className="text-xl font-bold tabular-nums text-white/95 md:text-2xl leading-tight">
-                  {formatClock(now)}
+              <div className="flex items-center gap-3">
+                <div className="hidden md:block">
+                  <WeatherWidget refreshToken={refreshToken} />
                 </div>
-                <div className="text-xs text-white/50 capitalize">
-                  {formatDate(now)}
+                <div className="hidden md:block">
+                  <OpeningHoursWidget refreshToken={refreshToken} />
+                </div>
+                {/* Clock */}
+                <div className="dp-header-widget ml-1 rounded-2xl bg-white/5 px-5 py-2 text-right ring-1 ring-inset ring-white/10 min-w-[130px]">
+                  <div className="text-xl font-bold tabular-nums text-white/95 md:text-2xl leading-tight">
+                    {formatClock(now)}
+                  </div>
+                  <div className="text-xs text-white/50 capitalize">
+                    {formatDate(now)}
+                  </div>
                 </div>
               </div>
             </>
@@ -299,10 +413,11 @@ export function Dashboard() {
       )}
 
       {/* Page content */}
-      <div className={rotationIsActive ? "mt-3" : "mt-5"}>
+      <div className={rotationIsActive ? "dp-page-main mt-3" : "dp-page-main mt-5"}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activePage.id}
+            className="dp-page-motion"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -332,7 +447,10 @@ export function Dashboard() {
             </div>
 
             {dynamicMode ? (
-              <div className="dp-page-content dp-columns mt-4 columns-1 md:columns-2 xl:columns-3 [column-fill:_balance]">
+              <div
+                className="dp-page-content dp-columns mt-4 columns-1 md:columns-2 xl:columns-3 [column-fill:_balance]"
+                style={activePage.id === "oversikt" ? { columnGap: "1.2rem" } : undefined}
+              >
                 {activePage.modules.map((id) =>
                   cloneElement(renderModule(id, refreshToken, true), { key: id }),
                 )}

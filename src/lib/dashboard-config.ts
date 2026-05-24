@@ -8,7 +8,6 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
     id: "oversikt",
     title: "Full oversikt",
     modules: [
-      "weather",
       "asana",
       "monotree",
       "librenms",
@@ -22,7 +21,6 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
     id: "infrastruktur",
     title: "Infrastruktur & Nettverk",
     modules: [
-      "weather",
       "librenms",
       "ninjaone",
       "esper",
@@ -32,6 +30,7 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
     id: "drift",
     title: "Drift & Gjester",
     modules: [
+      "weather",
       "asana",
       "monotree",
       "zoined",

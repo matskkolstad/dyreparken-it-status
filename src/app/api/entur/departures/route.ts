@@ -7,7 +7,8 @@ import type { EnturDepartures, EnturDeparture } from "@/lib/types";
 
 type EnturGraphqlResponse = {
   data?: {
-    stopPlace?: {
+    stopPlaces?: Array<{
+      id?: string;
       name?: string;
       estimatedCalls?: Array<{
         aimedDepartureTime?: string;
@@ -22,14 +23,15 @@ type EnturGraphqlResponse = {
           };
         };
       }>;
-    };
+    }>;
   };
   errors?: Array<{ message?: string }>;
 };
 
 const ENTUR_QUERY = `
-query GetDepartures($stopPlaceId: String!, $maxDepartures: Int!) {
-  stopPlace(id: $stopPlaceId) {
+query GetDepartures($stopPlaceIds: [String!]!, $maxDepartures: Int!) {
+  stopPlaces(ids: $stopPlaceIds) {
+    id
     name
     estimatedCalls(numberOfDepartures: $maxDepartures, whiteListedModes: [bus]) {
       aimedDepartureTime
@@ -67,8 +69,12 @@ function toDelayMinutes(expectedIso?: string, aimedIso?: string) {
 
 function mapDeparture(
   raw: NonNullable<
-    NonNullable<NonNullable<EnturGraphqlResponse["data"]>["stopPlace"]>["estimatedCalls"]
+    NonNullable<
+      NonNullable<NonNullable<EnturGraphqlResponse["data"]>["stopPlaces"]>[number]
+    >["estimatedCalls"]
   >[number],
+  stopPlaceId: string,
+  stopPlaceName: string,
   index: number,
 ): EnturDeparture | null {
   const departureTime = raw.expectedDepartureTime ?? raw.aimedDepartureTime;
@@ -82,9 +88,10 @@ function mapDeparture(
   const destination = raw.destinationDisplay?.frontText ?? "Ukjent destinasjon";
 
   return {
-    id: `${line}-${destination}-${index}`,
+    id: `${stopPlaceId}-${line}-${destination}-${index}`,
     line,
     destination,
+    stopName: stopPlaceName,
     departureTime: departureTime!,
     aimedDepartureTime: raw.aimedDepartureTime,
     minutesUntilDeparture,
@@ -98,9 +105,14 @@ export async function GET() {
     return NextResponse.json(dummyEntur());
   }
 
-  const stopPlaceId = requireEnv("ENTUR_STOP_PLACE_ID");
+  const stopPlaceIdsRaw =
+    process.env.ENTUR_STOP_PLACE_IDS ?? requireEnv("ENTUR_STOP_PLACE_ID");
+  const stopPlaceIds = stopPlaceIdsRaw
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
   const clientName = requireEnv("ENTUR_CLIENT_NAME");
-  const endpoint = process.env.ENTUR_API_URL ?? "https://api.entur.io/realtime/v1/graphql";
+  const endpoint = process.env.ENTUR_API_URL ?? "https://api.entur.io/journey-planner/v3/graphql";
   const maxDepartures = Number(process.env.ENTUR_MAX_DEPARTURES ?? "10");
 
   const response = await fetchJsonServer<EnturGraphqlResponse>(endpoint, {
@@ -112,7 +124,7 @@ export async function GET() {
     body: JSON.stringify({
       query: ENTUR_QUERY,
       variables: {
-        stopPlaceId,
+        stopPlaceIds,
         maxDepartures: Number.isFinite(maxDepartures) && maxDepartures > 0 ? maxDepartures : 10,
       },
     }),
@@ -125,10 +137,19 @@ export async function GET() {
     throw new Error(`Entur GraphQL error: ${messages.join("; ") || "Unknown error"}`);
   }
 
-  const stopName = response.data?.stopPlace?.name ?? "Dyreparken";
-  const departures = (response.data?.stopPlace?.estimatedCalls ?? [])
-    .map(mapDeparture)
-    .filter((departure): departure is EnturDeparture => departure !== null)
+  const stopPlaces = response.data?.stopPlaces ?? [];
+  const stopName = stopPlaces
+    .map((stop) => stop.name)
+    .filter((name): name is string => Boolean(name))
+    .join(" + ") || "Dyreparken";
+  const departures = stopPlaces
+    .flatMap((stop) =>
+      (stop.estimatedCalls ?? [])
+        .map((call, index) =>
+          mapDeparture(call, stop.id ?? "stop", stop.name ?? "Ukjent stopp", index),
+        )
+        .filter((departure): departure is EnturDeparture => departure !== null),
+    )
     .sort((a, b) => a.minutesUntilDeparture - b.minutesUntilDeparture)
     .slice(0, 6);
 

@@ -53,7 +53,12 @@ export function WeatherModule(props: { refreshToken: number; dynamicMode?: boole
         <div className="flex h-full flex-col justify-between">
           <div>
             <div className="text-sm text-white/55">{data?.locationName ?? "—"}</div>
-            <div className="weather-temp mt-1 text-6xl font-bold tracking-tight text-white/95">
+            <div
+              className={[
+                "weather-temp mt-1 font-bold tracking-tight text-white/95",
+                dynamicMode ? "text-5xl" : "text-6xl",
+              ].join(" ")}
+            >
               {isLoading ? "…" : `${data?.temperatureC ?? "—"}°`}
             </div>
             <div className="mt-2 text-lg font-semibold text-white/80">

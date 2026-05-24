@@ -16,6 +16,18 @@ function severityFromCounts(offline?: number, error?: string) {
   return "ok";
 }
 
+function formatLastSeen(value?: string) {
+  if (!value) return "Ukjent";
+  const parsed = Date.parse(value);
+  if (!Number.isFinite(parsed)) return "Ukjent";
+  return new Date(parsed).toLocaleString("nb-NO", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean }) {
   const dynamicMode = props.dynamicMode ?? false;
   const { data, error, isLoading } = useApiData<EsperDevices>("/api/esper/devices", {
@@ -70,7 +82,9 @@ export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean
                 {(data?.offline ?? []).slice(0, offlineLimit).map((device) => (
                   <div key={device.name} className="flex items-center justify-between py-1 text-sm text-white/85">
                     <span className="truncate">{device.name}</span>
-                    <span className="ml-3 shrink-0 text-xs text-white/55">{device.status ?? "offline"}</span>
+                    <span className="ml-3 shrink-0 text-xs text-white/55">
+                      {formatLastSeen(device.lastSeenAt)}
+                    </span>
                   </div>
                 ))}
                 {(data?.offline?.length ?? 0) > 0 ? null : (

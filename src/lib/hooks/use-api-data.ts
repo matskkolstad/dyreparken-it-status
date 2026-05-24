@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { fetchJson } from "@/lib/fetch-json";
 
+const memoryCache = new Map<string, { data: unknown; lastSuccessAt?: string }>();
+
 export type UseApiDataState<T> = {
   data?: T;
   error?: string;
@@ -17,10 +19,13 @@ export function useApiData<T>(
   options: { intervalMs?: number; refreshToken?: number } = {},
 ): UseApiDataState<T> {
   const { intervalMs, refreshToken } = options;
-  const [data, setData] = useState<T>();
+  const cached = memoryCache.get(url);
+  const [data, setData] = useState<T | undefined>(() => cached?.data as T | undefined);
   const [error, setError] = useState<string>();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [lastSuccessAt, setLastSuccessAt] = useState<string>();
+  const [isLoading, setIsLoading] = useState<boolean>(!cached?.data);
+  const [lastSuccessAt, setLastSuccessAt] = useState<string | undefined>(
+    cached?.lastSuccessAt,
+  );
 
   const mountedRef = useRef(true);
   const [refreshIndex, setRefreshIndex] = useState(0);
@@ -57,7 +62,9 @@ export function useApiData<T>(
         const nextData = await fetchJson<T>(url);
         if (cancelled || !mountedRef.current) return;
         setData(nextData);
-        setLastSuccessAt(new Date().toISOString());
+        const now = new Date().toISOString();
+        setLastSuccessAt(now);
+        memoryCache.set(url, { data: nextData, lastSuccessAt: now });
       } catch (err) {
         if (cancelled || !mountedRef.current) return;
         const message = err instanceof Error ? err.message : "Unknown error";

@@ -28,6 +28,24 @@ body {
     Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
+.dp-header-widget {
+  min-height: 72px;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+body[data-controls-hidden="true"] {
+  cursor: none;
+}
+
+.dp-page-shell[data-controls-hidden="true"] .dp-controls-hideable {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -143,6 +161,30 @@ body::before {
     margin-top: 0.75rem;
   }
 
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] {
+    padding: 0.85rem 1rem;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-header {
+    margin-bottom: 0.35rem;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-main {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-content {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-footer {
+    display: none;
+  }
+
   html[data-force-fit="true"] .dp-page-shell[data-page-id="oversikt"] .dp-grid,
   html[data-force-fit="true"] .dp-page-shell[data-page-id="oversikt"] .dp-columns {
     gap: 0.4rem;
@@ -169,14 +211,9 @@ body::before {
   }
 
   .dp-page-shell[data-page-id="oversikt"] .dp-columns {
-    display: grid;
-    columns: unset;
-    column-count: unset;
-    column-gap: 0;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.6rem;
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: minmax(0, 1fr);
+    column-count: 4;
+    column-gap: 1.25rem;
+    column-fill: balance;
     height: 100%;
   }
 
@@ -186,13 +223,40 @@ body::before {
 
   .dp-page-shell[data-page-id="oversikt"] .dp-card {
     padding: 0.75rem;
-    height: 100%;
   }
 
   .dp-page-shell[data-page-id="oversikt"] .dp-columns .dp-card > div {
     margin-top: 0.5rem;
-    height: calc(100% - 2.9rem);
-    overflow: hidden;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"] .dp-card[data-module-id="asana"] .asana-latest {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"] .dp-card[data-module-id="asana"] .asana-stats {
+    gap: 0.4rem;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"] .dp-card[data-module-id="asana"] .asana-stat {
+    padding: 0.45rem 0.55rem;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"] .dp-card[data-module-id="asana"] .asana-stat-value {
+    font-size: 1.35rem;
+    line-height: 1.1;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"] .dp-card[data-module-id="asana"] .asana-latest-list {
+    gap: 0.35rem;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"] .dp-card[data-module-id="asana"] .asana-latest-list li {
+    padding: 0.35rem 0.45rem;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"] .dp-card[data-module-id="asana"] .asana-latest-list {
+    margin-top: 0.35rem;
+    gap: 0.35rem;
   }
 
   .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-columns .dp-card[data-module-id="weather"] {
@@ -269,4 +333,68 @@ body::before {
   .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-card[data-module-id="monotree"] [data-monotree-item] {
     padding: 0.45rem 0.6rem;
   }
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] {
+  padding: 0.85rem 1rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-header {
+  margin-bottom: 0.35rem;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-motion {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-content {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-page-footer {
+  display: none;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-columns {
+  column-count: 4;
+  column-gap: 1.1rem;
+  column-fill: balance;
+  gap: 0.5rem;
+  height: 100%;
+  padding-inline: 0.1rem;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-columns > .dp-card {
+  margin-bottom: 0.9rem;
+}
+
+.dp-page-shell[data-dynamic-mode="true"] .dp-columns {
+  column-gap: 1.2rem;
+}
+
+.dp-page-shell[data-dynamic-mode="true"] .dp-columns > .dp-card {
+  margin-bottom: 0.9rem;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-card {
+  padding: 0.65rem;
+}
+
+.dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-card > div {
+  margin-top: 0.4rem;
 }

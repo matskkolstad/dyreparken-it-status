@@ -36,13 +36,23 @@ export function ZoinedModule(props: { refreshToken: number; dynamicMode?: boolea
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
               <div className="text-xs text-white/65">Dyreparken</div>
-              <div className="mt-1 text-4xl font-semibold text-white/95">
+              <div
+                className={[
+                  "mt-1 font-semibold text-white/95",
+                  dynamicMode ? "text-3xl" : "text-4xl",
+                ].join(" ")}
+              >
                 {isLoading ? "…" : data?.dyreparkenGuests ?? "—"}
               </div>
             </div>
             <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
               <div className="text-xs text-white/65">Badeland</div>
-              <div className="mt-1 text-4xl font-semibold text-white/95">
+              <div
+                className={[
+                  "mt-1 font-semibold text-white/95",
+                  dynamicMode ? "text-3xl" : "text-4xl",
+                ].join(" ")}
+              >
                 {isLoading ? "…" : data?.badelandGuests ?? "—"}
               </div>
             </div>
