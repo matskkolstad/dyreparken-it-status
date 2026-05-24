@@ -113,6 +113,13 @@ export function Dashboard() {
   }, []);
 
   const activePage = pages[activePageIndex] ?? pages[0]!;
+
+  useEffect(() => {
+    document.body.dataset.pageId = activePage.id;
+    document.body.dataset.dynamicMode = dynamicMode ? "true" : "false";
+    document.documentElement.dataset.pageId = activePage.id;
+    document.documentElement.dataset.dynamicMode = dynamicMode ? "true" : "false";
+  }, [activePage.id, dynamicMode]);
   const rotationIsActive = rotationEnabled && pages.length > 1;
   const rotationIsActiveForRender = isClient ? rotationIsActive : DEFAULT_ROTATION_ENABLED;
 
