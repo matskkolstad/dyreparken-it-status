@@ -140,6 +140,7 @@ Bruker LibreNMS syslog-API for å hente de siste Graylog-meldingene.
 ### Nyheter (RSS)
 
 Henter RSS-nyheter fra Digi.no, Teknisk Ukeblad, Tek.no og VG, og viser de 10 nyeste samlet.
+For å sikre variasjon vises maks 3 saker fra VG samtidig.
 
 ### NinjaOne
 

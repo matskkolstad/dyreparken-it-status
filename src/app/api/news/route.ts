@@ -16,6 +16,10 @@ const FEEDS: FeedSource[] = [
   { name: "VG", url: "https://www.vg.no/rss/feed/?format=rss" },
 ];
 
+const SOURCE_LIMITS: Record<string, number> = {
+  "VG": 3,
+};
+
 async function fetchText(url: string, timeoutMs = 12_000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -127,11 +131,19 @@ export async function GET() {
   const results = await Promise.allSettled(FEEDS.map((feed) => fetchFeed(feed)));
   const items = results.flatMap((result) => (result.status === "fulfilled" ? result.value : []));
   const sorted = items.sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt));
+  const counts = new Map<string, number>();
+  const limited = sorted.filter((item) => {
+    const limit = SOURCE_LIMITS[item.source] ?? Infinity;
+    const current = counts.get(item.source) ?? 0;
+    if (current >= limit) return false;
+    counts.set(item.source, current + 1);
+    return true;
+  });
 
   const result: NewsFeed = {
     lastUpdatedAt: new Date().toISOString(),
     isDummyData: false,
-    items: sorted.slice(0, 10),
+    items: limited.slice(0, 10),
   };
 
   return NextResponse.json(result);

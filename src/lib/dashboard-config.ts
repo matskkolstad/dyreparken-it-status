@@ -36,7 +36,6 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
       "weather",
       "asana",
       "monotree",
-      "news",
       "zoined",
       "entur",
     ] satisfies DashboardModuleId[],
