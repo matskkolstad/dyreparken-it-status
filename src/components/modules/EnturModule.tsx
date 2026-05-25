@@ -14,10 +14,14 @@ function formatMinutes(minutes: number) {
   return `${minutes} min`;
 }
 
-function formatRealtimeStatus(delayMinutes: number | undefined, isRealtime: boolean) {
-  if (!isRealtime) return "Plan";
-  if ((delayMinutes ?? 0) <= 0) return "I rute";
-  return `+${delayMinutes} min`;
+function formatClockTime(value?: string) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleTimeString("nb-NO", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean }) {
@@ -87,28 +91,46 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
       ) : (
         <div className="flex h-full flex-col justify-between">
           <div key={`entur-page-${dynamicMode ? "dynamic" : pageIndex}`} className="space-y-2 overflow-hidden">
-            {pageDepartures.map((departure) => (
-              <div
-                key={departure.id}
-                className="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-inset ring-white/10"
-              >
-                <div className="min-w-0">
-                  <div className="inline-flex rounded-md bg-[color:rgba(15,184,137,0.2)] px-2 py-0.5 text-xs font-semibold text-[color:rgba(170,255,230,0.95)] ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)]">
-                    Linje {departure.line}
+            {pageDepartures.map((departure) => {
+              const isDelayed = (departure.delayMinutes ?? 0) > 0;
+              const aimedTime = formatClockTime(departure.aimedDepartureTime);
+              const expectedTime = formatClockTime(departure.departureTime);
+
+              return (
+                <div
+                  key={departure.id}
+                  className="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-inset ring-white/10"
+                >
+                  <div className="min-w-0">
+                    <div className="inline-flex rounded-md bg-[color:rgba(15,184,137,0.2)] px-2 py-0.5 text-xs font-semibold text-[color:rgba(170,255,230,0.95)] ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)]">
+                      Linje {departure.line}
+                    </div>
+                    <div className="mt-1 truncate text-sm text-white/90">{departure.destination}</div>
+                    <div className="truncate text-xs text-white/55">{departure.stopName}</div>
+                    {departure.platform ? (
+                      <div className="truncate text-xs text-white/45">
+                        Plattform {departure.platform}
+                      </div>
+                    ) : null}
                   </div>
-                  <div className="mt-1 truncate text-sm text-white/90">{departure.destination}</div>
-                  <div className="truncate text-xs text-white/55">{departure.stopName}</div>
+                  <div className="text-right">
+                    <div className="text-sm font-semibold text-white/95">
+                      {formatMinutes(departure.minutesUntilDeparture)}
+                    </div>
+                    <div className="text-xs">
+                      {isDelayed ? (
+                        <div className="flex items-center justify-end gap-2">
+                          <span className="text-white/45 line-through">{aimedTime}</span>
+                          <span className="text-red-300">{expectedTime}</span>
+                        </div>
+                      ) : (
+                        <span className="text-emerald-300">{expectedTime}</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-white/95">
-                    {formatMinutes(departure.minutesUntilDeparture)}
-                  </div>
-                  <div className="text-xs text-white/50">
-                    {formatRealtimeStatus(departure.delayMinutes, departure.isRealtime)}
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
             {!hasDepartures ? (
               <div className="rounded-xl bg-white/5 px-3 py-2 text-sm text-white/65 ring-1 ring-inset ring-white/10">
                 Ingen kommende bussavganger funnet.

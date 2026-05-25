@@ -14,6 +14,10 @@ type EnturGraphqlResponse = {
         aimedDepartureTime?: string;
         expectedDepartureTime?: string;
         realtime?: boolean;
+        quay?: {
+          publicCode?: string;
+          name?: string;
+        };
         destinationDisplay?: { frontText?: string };
         serviceJourney?: {
           journeyPattern?: {
@@ -37,6 +41,10 @@ query GetDepartures($stopPlaceIds: [String!]!, $maxDepartures: Int!) {
       aimedDepartureTime
       expectedDepartureTime
       realtime
+      quay {
+        publicCode
+        name
+      }
       destinationDisplay {
         frontText
       }
@@ -86,12 +94,14 @@ function mapDeparture(
 
   const line = raw.serviceJourney?.journeyPattern?.line?.publicCode ?? "-";
   const destination = raw.destinationDisplay?.frontText ?? "Ukjent destinasjon";
+  const platform = raw.quay?.publicCode ?? raw.quay?.name ?? undefined;
 
   return {
     id: `${stopPlaceId}-${line}-${destination}-${index}`,
     line,
     destination,
     stopName: stopPlaceName,
+    platform,
     departureTime: departureTime!,
     aimedDepartureTime: raw.aimedDepartureTime,
     minutesUntilDeparture,

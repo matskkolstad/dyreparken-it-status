@@ -157,14 +157,19 @@ async function loadEsperData(): Promise<EsperDevices> {
   }
 
   const activeDevices = devices.filter((device) => device.is_active !== false);
-  const offline = activeDevices
+  const offlineEntries = activeDevices
     .map((device) => {
       const heartbeat = device.id ? heartbeatMap.get(device.id) : undefined;
       const timestamp = heartbeat?.timestamp;
       const lastSeen = timestamp ? Date.parse(timestamp) : Number.NaN;
       const ageMs = Number.isFinite(lastSeen) ? now.getTime() - lastSeen : Number.POSITIVE_INFINITY;
       const status = heartbeat?.status;
-      const isOffline = !timestamp || !Number.isFinite(lastSeen) || status === 0 || status === "0" || ageMs > offlineAfterMs;
+      const isOffline =
+        !timestamp ||
+        !Number.isFinite(lastSeen) ||
+        status === 0 ||
+        status === "0" ||
+        ageMs > offlineAfterMs;
       return {
         device,
         isOffline,
@@ -173,15 +178,14 @@ async function loadEsperData(): Promise<EsperDevices> {
       };
     })
     .filter((entry) => entry.isOffline)
-    .sort((a, b) => b.lastSeenMs - a.lastSeenMs)
-    .slice(0, 20)
-    .map((entry, index) => ({
-      name: deviceName(entry.device, index),
-      lastSeenAt: entry.lastSeenAt,
-    }));
+    .sort((a, b) => b.lastSeenMs - a.lastSeenMs);
 
-  const offlineCount = offline.length;
+  const offlineCount = offlineEntries.length;
   const onlineCount = Math.max(0, activeDevices.length - offlineCount);
+  const offline = offlineEntries.slice(0, 20).map((entry, index) => ({
+    name: deviceName(entry.device, index),
+    lastSeenAt: entry.lastSeenAt,
+  }));
 
   const result: EsperDevices = {
     lastUpdatedAt: new Date().toISOString(),

@@ -53,10 +53,21 @@ export type MonotreeFeed = ApiMeta & {
   posts: MonotreePost[];
 };
 
+export type LibreNmsAlert = {
+  id: string;
+  device: string;
+  message: string;
+  timestamp: string;
+  severity?: string;
+  state?: string;
+};
+
 export type LibreNmsSwitches = ApiMeta & {
   onlineCount: number;
   offlineCount: number;
   offline: { name: string; ip?: string }[];
+  alerts: LibreNmsAlert[];
+  alertHistory: LibreNmsAlert[];
 };
 
 export type NinjaOneAgents = ApiMeta & {
@@ -81,6 +92,7 @@ export type EnturDeparture = {
   line: string;
   destination: string;
   stopName: string;
+  platform?: string;
   departureTime: string;
   aimedDepartureTime?: string;
   minutesUntilDeparture: number;

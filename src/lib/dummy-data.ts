@@ -3,6 +3,7 @@ import type {
   EnturDepartures,
   EsperDevices,
   LibreNmsSwitches,
+  LibreNmsAlert,
   MonotreeFeed,
   NinjaOneAgents,
   WeatherCurrent,
@@ -418,11 +419,84 @@ const libreSamples: Omit<LibreNmsSwitches, keyof ReturnType<typeof meta>>[] = [
       { name: "SW-TEKNISK-03", ip: "10.10.3.12" },
       { name: "SW-BADELAND-01", ip: "10.20.1.5" },
     ],
+    alerts: [
+      {
+        id: "alert-1",
+        device: "sw-serverrom",
+        message: "Port utilisation over threshold",
+        timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+      },
+    ],
+    alertHistory: [
+      {
+        id: "hist-1",
+        device: "sw-serverrom",
+        message: "Port utilisation over threshold",
+        timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-2",
+        device: "sw-entrance-02",
+        message: "Device is down",
+        timestamp: new Date(Date.now() - 95 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-3",
+        device: "sw-admin-01",
+        message: "High CPU usage",
+        timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-4",
+        device: "sw-piraten-02",
+        message: "Link flapping detected",
+        timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-5",
+        device: "sw-badeland-01",
+        message: "Power supply warning",
+        timestamp: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
   },
   {
     onlineCount: 37,
     offlineCount: 1,
     offline: [{ name: "SW-PIRATEN-02", ip: "10.30.2.7" }],
+    alerts: [],
+    alertHistory: [
+      {
+        id: "hist-6",
+        device: "sw-piraten-02",
+        message: "Device is down",
+        timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-7",
+        device: "sw-admin-02",
+        message: "High temperature",
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-8",
+        device: "sw-teknisk-03",
+        message: "Link down",
+        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-9",
+        device: "sw-entrance-01",
+        message: "Port utilisation over threshold",
+        timestamp: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-10",
+        device: "sw-badeland-04",
+        message: "Power supply warning",
+        timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
   },
   {
     onlineCount: 34,
@@ -433,11 +507,90 @@ const libreSamples: Omit<LibreNmsSwitches, keyof ReturnType<typeof meta>>[] = [
       { name: "SW-BADELAND-04", ip: "10.20.1.9" },
       { name: "SW-INNGANG-01", ip: "10.40.1.4" },
     ],
+    alerts: [
+      {
+        id: "alert-2",
+        device: "sw-admin-01",
+        message: "Device is down",
+        timestamp: new Date(Date.now() - 35 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "alert-3",
+        device: "sw-inngang-01",
+        message: "Link flapping detected",
+        timestamp: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+      },
+    ],
+    alertHistory: [
+      {
+        id: "hist-11",
+        device: "sw-inngang-01",
+        message: "Link flapping detected",
+        timestamp: new Date(Date.now() - 50 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-12",
+        device: "sw-admin-02",
+        message: "High CPU usage",
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-13",
+        device: "sw-badeland-04",
+        message: "Device is down",
+        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-14",
+        device: "sw-teknisk-03",
+        message: "Port utilisation over threshold",
+        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-15",
+        device: "sw-admin-01",
+        message: "Device is down",
+        timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
   },
   {
     onlineCount: 38,
     offlineCount: 0,
     offline: [],
+    alerts: [],
+    alertHistory: [
+      {
+        id: "hist-16",
+        device: "sw-piraten-02",
+        message: "Device recovered",
+        timestamp: new Date(Date.now() - 75 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-17",
+        device: "sw-badeland-01",
+        message: "Power supply warning",
+        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-18",
+        device: "sw-admin-02",
+        message: "High temperature",
+        timestamp: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-19",
+        device: "sw-teknisk-03",
+        message: "Link down",
+        timestamp: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "hist-20",
+        device: "sw-entrance-02",
+        message: "Port utilisation over threshold",
+        timestamp: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
   },
 ];
 
