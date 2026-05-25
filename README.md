@@ -6,7 +6,7 @@ Statusdashboard for IT-avdelingen i Dyreparken Kristiansand. Nettsiden samler da
 
 ## Funksjoner
 
-- **8 moduler** – Vær, Asana, Monotree, LibreNMS, NinjaOne, Esper, Zoined og Entur (bussavganger)
+- **10 moduler** – Vær, Asana, Monotree, Nyheter, LibreNMS, Libre Graylog, NinjaOne, Esper, Zoined og Entur (bussavganger)
 - **Automatisk oppdatering** – Henter data fra API-ene hvert minutt i produksjon (10 sekunder i utvikling)
 - **Flerside-visning** – Modulene er fordelt på flere sider som roterer automatisk
 - **Manuell kontroll** – Pause/play rotering, hopp til neste side, manuell oppdatering
@@ -81,13 +81,15 @@ cp .env.example .env.local
 | `LIBRENMS_BASE_URL` | Ja* | Base-URL til LibreNMS |
 | `LIBRENMS_API_TOKEN` | Ja* | API-token fra LibreNMS |
 | `LIBRENMS_SWITCH_REGEX` | Nei | Regulært uttrykk for å filtrere switcher |
+| `LIBRENMS_GRAYLOG_HOSTNAME` | Nei | Hostname for Graylog-logs i LibreNMS (standard: `all`) |
+| `LIBRENMS_GRAYLOG_LIMIT` | Nei | Antall Graylog-meldinger (standard: `10`) |
 | `NINJAONE_DEVICES_URL` | Ja* | URL til NinjaOne-enhetsendepunkt |
 | `NINJAONE_ACCESS_TOKEN` | Ja* | OAuth2 access token fra NinjaOne |
 | `ESPER_DEVICES_URL` | Ja* | URL til Esper-enhetsendepunkt |
 | `ESPER_API_TOKEN` | Ja* | API-token fra Esper |
 | `ZOINED_GUESTS_URL` | Ja* | URL til Zoined gjesteoversikt |
 | `ZOINED_API_KEY` | Nei | API-nøkkel for Zoined (valgfritt) |
-| `ENTUR_API_URL` | Nei | Entur GraphQL-endepunkt (standard: `https://api.entur.io/realtime/v1/graphql`) |
+| `ENTUR_API_URL` | Nei | Entur GraphQL-endepunkt (standard: `https://api.entur.io/journey-planner/v3/graphql`) |
 | `ENTUR_CLIENT_NAME` | Ja* | Entur klientidentifikator for `ET-Client-Name` |
 | `ENTUR_STOP_PLACE_ID` | Ja* | StopPlace-ID for Dyreparken |
 | `ENTUR_MAX_DEPARTURES` | Nei | Hvor mange avganger som hentes (standard: `10`) |
@@ -127,6 +129,17 @@ Bruker [LibreNMS API](https://docs.librenms.org/API/).
 1. Gå til **LibreNMS → Innstillinger → API → Add API Token**
 2. Sett `LIBRENMS_BASE_URL` til din instans (f.eks. `https://librenms.yourdomain.local`)
 3. Valgfritt: bruk `LIBRENMS_SWITCH_REGEX` for å filtrere enheter (f.eks. `^SW-` for alle switcher)
+
+### Libre Graylog
+
+Bruker LibreNMS syslog-API for å hente de siste Graylog-meldingene.
+
+1. Sett `LIBRENMS_GRAYLOG_HOSTNAME` til spesifikk host (eller `all`)
+2. Valgfritt: juster `LIBRENMS_GRAYLOG_LIMIT` for antall meldinger
+
+### Nyheter (RSS)
+
+Henter RSS-nyheter fra Digi.no, Teknisk Ukeblad, Tek.no og VG, og viser de 10 nyeste samlet.
 
 ### NinjaOne
 

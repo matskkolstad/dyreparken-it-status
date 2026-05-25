@@ -4,7 +4,9 @@ import type {
   EsperDevices,
   LibreNmsSwitches,
   LibreNmsAlert,
+  LibreNmsGraylog,
   MonotreeFeed,
+  NewsFeed,
   NinjaOneAgents,
   WeatherCurrent,
   OpeningHours,
@@ -411,6 +413,46 @@ export const dummyMonotree = (): MonotreeFeed => ({
   posts: monotreeSamples[cycleIndex(monotreeSamples.length)]!,
 });
 
+const newsSamples: Omit<NewsFeed, keyof ReturnType<typeof meta>>[] = [
+  {
+    items: [
+      {
+        id: "news-1",
+        source: "Digi.no",
+        title: "Nye krav til sikkerhet i offentlig sektor",
+        summary: "Kort oppsummering av nye sikkerhetskrav og hva det betyr for IT-avdelinger.",
+        publishedAt: new Date(Date.now() - 18 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "news-2",
+        source: "Teknisk Ukeblad",
+        title: "Datacentereffektivitet tar nytt steg",
+        summary: "Energisparing og smartere kjoling er hovedtema i ny rapport.",
+        publishedAt: new Date(Date.now() - 42 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "news-3",
+        source: "Tek.no",
+        title: "Nettverksoppgradering for raskere WiFi",
+        summary: "Slik kan bedrifter oppgradere trådløst uten store driftsstopp.",
+        publishedAt: new Date(Date.now() - 75 * 60 * 1000).toISOString(),
+      },
+      {
+        id: "news-4",
+        source: "VG",
+        title: "Stort cybersikkerhetsloft lansert",
+        summary: "Nasjonale tiltak skal redusere angrep mot kritisk infrastruktur.",
+        publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      },
+    ],
+  },
+];
+
+export const dummyNews = (): NewsFeed => ({
+  ...meta(),
+  ...newsSamples[cycleIndex(newsSamples.length)]!,
+});
+
 const libreSamples: Omit<LibreNmsSwitches, keyof ReturnType<typeof meta>>[] = [
   {
     onlineCount: 36,
@@ -597,6 +639,112 @@ const libreSamples: Omit<LibreNmsSwitches, keyof ReturnType<typeof meta>>[] = [
 export const dummyLibreNms = (): LibreNmsSwitches => ({
   ...meta(),
   ...libreSamples[cycleIndex(libreSamples.length)]!,
+});
+
+const graylogSamples: Omit<LibreNmsGraylog, keyof ReturnType<typeof meta>>[] = [
+  {
+    entries: [
+      {
+        id: "graylog-1",
+        origin: "10.2.21.115",
+        timestamp: new Date(Date.now() - 1 * 60 * 1000).toISOString(),
+        level: "(3) Error",
+        source: "10.2.21.115",
+        message:
+          "May 25 16:01:24 syslog: rccd_free_node_by_refcnt, remaining count_of_head_ready=0",
+        facility: "user-level",
+      },
+      {
+        id: "graylog-2",
+        origin: "10.2.21.115",
+        timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
+        level: "(3) Error",
+        source: "10.2.21.115",
+        message:
+          "May 25 16:01:24 syslog: rccd_success_data, routine readidx timestamp=NULL(reach tail)",
+        facility: "user-level",
+      },
+      {
+        id: "graylog-3",
+        origin: "10.2.21.115",
+        timestamp: new Date(Date.now() - 3 * 60 * 1000).toISOString(),
+        level: "(3) Error",
+        source: "10.2.21.115",
+        message:
+          "May 25 16:01:24 syslog: rccd_success_data, routine get 1 success entries in report!!",
+        facility: "user-level",
+      },
+      {
+        id: "graylog-4",
+        origin: "sw-afrika-jungel",
+        timestamp: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
+        level: "(6) Informational",
+        source: "sw-afrika-jungel",
+        message: "Event|7902|LOG_INFO|AMM|1/1|Powered device power delivery on interface 1/1/4",
+        facility: "local7",
+      },
+      {
+        id: "graylog-5",
+        origin: "sw-afrika-jungel",
+        timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+        level: "(6) Informational",
+        source: "sw-afrika-jungel",
+        message: "Event|7901|LOG_INFO|AMM|1/1|Detected powered device on interface 1/1/4. Type:1, Class:0",
+        facility: "local7",
+      },
+      {
+        id: "graylog-6",
+        origin: "10.2.20.167",
+        timestamp: new Date(Date.now() - 6 * 60 * 1000).toISOString(),
+        level: "(3) Error",
+        source: "10.2.20.167",
+        message: "May 25 16:01:22 chanflybg: Radio(1) is_vo_vi_active=0",
+        facility: "system daemon",
+      },
+      {
+        id: "graylog-7",
+        origin: "10.2.20.167",
+        timestamp: new Date(Date.now() - 7 * 60 * 1000).toISOString(),
+        level: "(3) Error",
+        source: "10.2.20.167",
+        message: "May 25 16:01:22 chanflybg: Checking Downtime (Mon May 25 16:01:22 2026,Mon May 25 18:01:22 2026) bitmap=4 tm_hour=18",
+        facility: "system daemon",
+      },
+      {
+        id: "graylog-8",
+        origin: "dp-dev",
+        timestamp: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
+        level: "(3) Error",
+        source: "dp-dev",
+        message:
+          "2026-05-25 18:01:25,663 - apscheduler.executors.default - INFO - Job \"ETLPipeline.run_journeys\" executed successfully.",
+        facility: "",
+      },
+      {
+        id: "graylog-9",
+        origin: "10.2.21.101",
+        timestamp: new Date(Date.now() - 9 * 60 * 1000).toISOString(),
+        level: "(3) Error",
+        source: "10.2.21.101",
+        message: "May 25 16:01:23 collectd[9034]: rks_aggr_apReport_binRadio, warning: no delta value for sum_usec",
+        facility: "system daemon",
+      },
+      {
+        id: "graylog-10",
+        origin: "sw-bobil",
+        timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+        level: "(6) Informational",
+        source: "sw-bobil",
+        message: "10.155.10.109 00076 ports: port 3 is now on-line",
+        facility: "user-level",
+      },
+    ],
+  },
+];
+
+export const dummyLibreGraylog = (): LibreNmsGraylog => ({
+  ...meta(),
+  ...graylogSamples[cycleIndex(graylogSamples.length)]!,
 });
 
 const ninjaSamples: Omit<NinjaOneAgents, keyof ReturnType<typeof meta>>[] = [

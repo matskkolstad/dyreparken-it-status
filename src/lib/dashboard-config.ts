@@ -10,7 +10,9 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
     modules: [
       "asana",
       "monotree",
+      "news",
       "librenms",
+      "libre-graylog",
       "ninjaone",
       "esper",
       "zoined",
@@ -22,6 +24,7 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
     title: "Infrastruktur & Nettverk",
     modules: [
       "librenms",
+      "libre-graylog",
       "ninjaone",
       "esper",
     ] satisfies DashboardModuleId[],
@@ -33,6 +36,7 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
       "weather",
       "asana",
       "monotree",
+      "news",
       "zoined",
       "entur",
     ] satisfies DashboardModuleId[],

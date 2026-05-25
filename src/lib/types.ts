@@ -4,7 +4,9 @@ export type DashboardModuleId =
   | "weather"
   | "asana"
   | "monotree"
+  | "news"
   | "librenms"
+  | "libre-graylog"
   | "ninjaone"
   | "esper"
   | "zoined"
@@ -53,6 +55,19 @@ export type MonotreeFeed = ApiMeta & {
   posts: MonotreePost[];
 };
 
+export type NewsItem = {
+  id: string;
+  source: string;
+  title: string;
+  summary: string;
+  publishedAt: string;
+  url?: string;
+};
+
+export type NewsFeed = ApiMeta & {
+  items: NewsItem[];
+};
+
 export type LibreNmsAlert = {
   id: string;
   device: string;
@@ -68,6 +83,20 @@ export type LibreNmsSwitches = ApiMeta & {
   offline: { name: string; ip?: string }[];
   alerts: LibreNmsAlert[];
   alertHistory: LibreNmsAlert[];
+};
+
+export type LibreNmsGraylogEntry = {
+  id: string;
+  origin: string;
+  timestamp: string;
+  level?: string;
+  source?: string;
+  message: string;
+  facility?: string;
+};
+
+export type LibreNmsGraylog = ApiMeta & {
+  entries: LibreNmsGraylogEntry[];
 };
 
 export type NinjaOneAgents = ApiMeta & {

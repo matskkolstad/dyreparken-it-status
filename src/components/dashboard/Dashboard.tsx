@@ -17,8 +17,10 @@ import { useApiData } from "@/lib/hooks/use-api-data";
 import { AsanaModule } from "@/components/modules/AsanaModule";
 import { EnturModule } from "@/components/modules/EnturModule";
 import { EsperModule } from "@/components/modules/EsperModule";
+import { LibreGraylogModule } from "@/components/modules/LibreGraylogModule";
 import { LibreNmsModule } from "@/components/modules/LibreNmsModule";
 import { MonotreeModule } from "@/components/modules/MonotreeModule";
+import { NewsModule } from "@/components/modules/NewsModule";
 import { NinjaOneModule } from "@/components/modules/NinjaOneModule";
 import { WeatherModule } from "@/components/modules/WeatherModule";
 import { ZoinedModule } from "@/components/modules/ZoinedModule";
@@ -31,8 +33,12 @@ function renderModule(id: DashboardModuleId, refreshToken: number, dynamicMode: 
       return <AsanaModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "monotree":
       return <MonotreeModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
+    case "news":
+      return <NewsModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "librenms":
       return <LibreNmsModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
+    case "libre-graylog":
+      return <LibreGraylogModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "ninjaone":
       return <NinjaOneModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "esper":
