@@ -292,9 +292,9 @@ export function Dashboard() {
             <img
               src="/logo_diamant_hvit.png"
               alt="Dyreparken"
-              className="h-11 w-11 object-contain"
+              className="h-16 w-16 object-contain"
             />
-            <div className="min-w-0">
+            <div className="min-w-0 flex flex-col justify-center">
               <h1 className="truncate text-2xl font-bold tracking-tight text-white/95 md:text-3xl">
                 Dyreparken IT Status
               </h1>
