@@ -289,9 +289,11 @@ export function Dashboard() {
         {/* Branding */}
         <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[color:rgba(247,181,0,0.16)] ring-1 ring-inset ring-[color:rgba(247,181,0,0.4)] text-xl select-none">
-              🦁
-            </div>
+            <img
+              src="/logo_diamant_hvit.png"
+              alt="Dyreparken"
+              className="h-11 w-11 object-contain"
+            />
             <div className="min-w-0">
               <h1 className="truncate text-2xl font-bold tracking-tight text-white/95 md:text-3xl">
                 Dyreparken IT Status
