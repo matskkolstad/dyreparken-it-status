@@ -73,7 +73,7 @@ export function AsanaModule(props: { refreshToken: number; dynamicMode?: boolean
             {latestTasks.length === 0 ? (
               <div className="asana-latest-empty mt-1 text-xs text-white/70">Ingen nye saker.</div>
             ) : (
-              <ul ref={listRef} className="asana-latest-list mt-2 flex-1 space-y-2 overflow-y-auto pr-1 text-xs text-white/85">
+              <ul ref={listRef} className="dp-auto-scroll asana-latest-list mt-2 flex-1 space-y-2 overflow-y-auto pr-1 text-xs text-white/85">
                 {latestTasks.map((task) => (
                   <li
                     key={task.id}

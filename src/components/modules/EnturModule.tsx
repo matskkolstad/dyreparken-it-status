@@ -80,7 +80,7 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
           <div
             ref={dynamicMode ? undefined : staticScrollRef}
             key={`entur-list-${dynamicMode ? "dynamic" : "static"}`}
-            className={dynamicMode ? "space-y-2 overflow-hidden" : "space-y-2 overflow-y-auto pr-1"}
+            className={dynamicMode ? "space-y-2 overflow-hidden" : "dp-auto-scroll space-y-2 overflow-y-auto pr-1"}
           >
             {pageDepartures.map((departure) => {
               const isDelayed = (departure.delayMinutes ?? 0) > 0;

@@ -25,6 +25,9 @@ For each entry, include:
 - Updated `Kollektiv` static mode to show full list with auto-scroll instead of fixed page slicing.
 - Updated `Esper` static mode to always show offline devices section when offline devices exist.
 - Increased `Asana` static height by using row-span 2 in static mode.
+- Hid visual scrollbars for auto-scrolling module areas to keep the UI clean while preserving scrolling behavior.
+- Updated `Nyheter` static mode to use full-list auto-scroll (no paging fallback) so scrolling always activates when needed.
+- Added more vertical spacing in `Esper` when dynamic mode is on.
 
 #### How it was verified
 - `npm run lint` passed in demo checkout.

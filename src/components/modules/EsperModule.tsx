@@ -68,8 +68,8 @@ export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean
           ref={dynamicMode ? undefined : staticScrollRef}
           className={
             dynamicMode
-              ? "flex h-full flex-col justify-between"
-              : "flex h-full min-h-0 flex-col gap-3 overflow-y-auto pr-1"
+              ? "flex h-full flex-col gap-3 justify-between"
+              : "dp-auto-scroll flex h-full min-h-0 flex-col gap-3 overflow-y-auto pr-1"
           }
         >
           <div className="grid grid-cols-2 gap-3">

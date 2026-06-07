@@ -76,7 +76,7 @@ export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: bool
           className={
             dynamicMode
               ? "flex h-full flex-col gap-3 justify-between"
-              : "flex h-full min-h-0 flex-col gap-3 overflow-y-auto pr-1"
+              : "dp-auto-scroll flex h-full min-h-0 flex-col gap-3 overflow-y-auto pr-1"
           }
         >
           <div className="grid grid-cols-2 gap-3">

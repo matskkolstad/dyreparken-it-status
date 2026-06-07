@@ -1,7 +1,7 @@
 "use client";
 
 import { Newspaper } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 
 import type { NewsFeed } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
@@ -36,34 +36,20 @@ export function NewsModule(props: { refreshToken: number; dynamicMode?: boolean 
     rowHeight: 108,
     reservedHeight: 340,
   });
-  const staticLimit = 3;
-  const pageCount = Math.max(1, Math.ceil(items.length / staticLimit));
 
-  const [pageIndex, setPageIndex] = useState(0);
-  const effectivePageIndex = pageCount > 0 ? pageIndex % pageCount : 0;
   const pageItems = useMemo(() => {
     if (dynamicMode) {
       return items.slice(0, dynamicLimit);
     }
-    const start = effectivePageIndex * staticLimit;
-    return items.slice(start, start + staticLimit);
-  }, [dynamicLimit, dynamicMode, effectivePageIndex, items]);
-
-  useEffect(() => {
-    if (dynamicMode) return;
-    if (pageCount <= 1) return;
-    const timer = window.setInterval(() => {
-      setPageIndex((idx) => (idx + 1) % pageCount);
-    }, 8000);
-    return () => window.clearInterval(timer);
-  }, [dynamicMode, pageCount]);
+    return items;
+  }, [dynamicLimit, dynamicMode, items]);
 
   const severity = error ? "unknown" : "ok";
   const rowSpan = 1;
   const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : "Live";
   const staticScrollRef = useRef<HTMLDivElement>(null);
 
-  useAutoScroll(staticScrollRef, !dynamicMode && items.length > staticLimit, [data?.lastUpdatedAt, dynamicMode, pageIndex], 14);
+  useAutoScroll(staticScrollRef, !dynamicMode && items.length > 0, [data?.lastUpdatedAt, dynamicMode], 14);
 
   return (
     <ModuleCard
@@ -85,12 +71,12 @@ export function NewsModule(props: { refreshToken: number; dynamicMode?: boolean 
           className={
             dynamicMode
               ? "flex h-full flex-col"
-              : "flex h-full min-h-0 flex-col overflow-y-auto pr-1"
+              : "dp-auto-scroll flex h-full min-h-0 flex-col overflow-y-auto pr-1"
           }
         >
           <div className="mt-2 pb-3">
             <div
-              key={`news-page-${dynamicMode ? "dynamic" : pageIndex}`}
+              key={`news-page-${dynamicMode ? "dynamic" : "static"}`}
               className="space-y-3"
             >
               {pageItems.map((item) => (
