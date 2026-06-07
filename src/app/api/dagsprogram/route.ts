@@ -77,7 +77,11 @@ function firstValidTime(windows: AlgoliaOpeningWindow[]) {
   const target = openWindow ?? fallback;
   if (!target) return "Hele dagen";
   if (target.allday) return "Hele dagen";
-  return formatTime(target.from);
+
+  const from = formatTime(target.from);
+  const to = formatTime(target.to);
+  if (to === "Hele dagen" || to === from) return from;
+  return `${from}–${to}`;
 }
 
 function toDailyTimes(windows: AlgoliaOpeningWindow[], date: string, todayDate: string, nowClock: string) {

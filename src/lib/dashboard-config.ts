@@ -37,10 +37,17 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
       "dyrepresentasjoner",
       "spisesteder",
       "butikker",
-      "asana",
-      "monotree",
       "zoined",
       "entur",
+    ] satisfies DashboardModuleId[],
+  },
+  {
+    id: "annet",
+    title: "Annet",
+    modules: [
+      "entur",
+      "monotree",
+      "news",
     ] satisfies DashboardModuleId[],
   },
 ];

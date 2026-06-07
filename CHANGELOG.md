@@ -17,6 +17,19 @@ For each entry, include:
 ### 2026-06-07 | Environment: production
 
 #### What changed
+- Updated `Spisesteder` and `Butikker` to show full opening intervals (`fra-til`) instead of only opening clock time.
+- Fixed static-mode auto-scroll behavior for the new `Spisesteder` and `Butikker` modules by enforcing scrollable full-height containers.
+- Added new page `Annet` with modules: `Kollektiv`, `Monotree`, `Nyheter`.
+- Updated `Drift & Gjester` module composition by removing `Monotree` and `Asana`.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3000`)
+
+### 2026-06-07 | Environment: production
+
+#### What changed
 - Updated dagsprogram module date display format to `dd-mm-yyyy`.
 - Updated `Spisesteder` and `Butikker` modules to compact `3x3` card grids to reduce whitespace and improve readability.
 - Ensured `Spisesteder`/`Butikker` continue to show opening time only (not closing time).

@@ -64,7 +64,7 @@ export function ButikkerModule(props: { refreshToken: number; dynamicMode?: bool
           className={
             dynamicMode
               ? "overflow-hidden"
-              : "dp-auto-scroll overflow-y-auto pr-1"
+              : "dp-auto-scroll h-full min-h-0 overflow-y-auto pr-1"
           }
         >
           <div className="grid grid-cols-3 gap-2">
