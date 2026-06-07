@@ -15,6 +15,7 @@ Statusdashboard for IT-avdelingen i Dyreparken Kristiansand. Nettsiden samler da
 - **Pulserende statusindikator** – Grønn/gul/rød for hver modul
 - **Dynamisk modus** – Modulene utvider seg automatisk og viser mer detaljert info
 - **Stabil statisk layout** – I ikke-dynamisk modus holdes innhold innenfor hvert kort uten overlapping
+- **Auto-scroll i statisk modus** – Moduler med mer innhold scroller rolig automatisk nar `Dynamisk` er av
 - **Visuell prioritering** – Kritiske avvik/offline-feil kan vises i storre kort
 - **Klokkeslett og dato** – Øverst i høyre hjørne
 - **Dummy-data-modus** – Kjør uten API-nøkler under utvikling

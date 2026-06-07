@@ -20,6 +20,11 @@ For each entry, include:
 - Fixed module overlap in static mode (`Dynamisk` off) by making card layout height-safe.
 - Updated `ModuleCard` static layout to use robust flex sizing (`min-h-0`, `overflow-hidden`, `flex-1`) instead of hardcoded height math.
 - Added internal scroll handling for content-heavy modules (`LibreNMS`, `Nyheter`) in static mode so content stays inside each card.
+- Improved spacing in `LibreNMS` when dynamic mode is on.
+- Added automatic smooth scrolling for scrollable module content in static mode (`Asana`, `Nyheter`, `LibreNMS`, `Kollektiv`, `Esper`).
+- Updated `Kollektiv` static mode to show full list with auto-scroll instead of fixed page slicing.
+- Updated `Esper` static mode to always show offline devices section when offline devices exist.
+- Increased `Asana` static height by using row-span 2 in static mode.
 
 #### How it was verified
 - `npm run lint` passed in demo checkout.

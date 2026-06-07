@@ -1,11 +1,12 @@
 "use client";
 
 import { Newspaper } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { NewsFeed } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
 import { useApiData } from "@/lib/hooks/use-api-data";
+import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
 import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
@@ -60,6 +61,9 @@ export function NewsModule(props: { refreshToken: number; dynamicMode?: boolean 
   const severity = error ? "unknown" : "ok";
   const rowSpan = 1;
   const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : "Live";
+  const staticScrollRef = useRef<HTMLDivElement>(null);
+
+  useAutoScroll(staticScrollRef, !dynamicMode && items.length > staticLimit, [data?.lastUpdatedAt, dynamicMode, pageIndex], 14);
 
   return (
     <ModuleCard
@@ -77,6 +81,7 @@ export function NewsModule(props: { refreshToken: number; dynamicMode?: boolean 
         <div className="flex h-full items-center text-white/70">{error}</div>
       ) : (
         <div
+          ref={dynamicMode ? undefined : staticScrollRef}
           className={
             dynamicMode
               ? "flex h-full flex-col"

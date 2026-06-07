@@ -1,10 +1,12 @@
 "use client";
 
 import { Smartphone } from "lucide-react";
+import { useRef } from "react";
 
 import type { EsperDevices } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
 import { useApiData } from "@/lib/hooks/use-api-data";
+import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
 import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
@@ -44,6 +46,9 @@ export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean
   const severity = severityFromCounts(data?.offlineCount, error);
   const rowSpan = severity === "down" || severity === "degraded" ? 2 : 1;
   const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : "Live";
+  const staticScrollRef = useRef<HTMLDivElement>(null);
+
+  useAutoScroll(staticScrollRef, !dynamicMode, [data?.lastUpdatedAt, dynamicMode], 14);
 
   return (
     <ModuleCard
@@ -59,7 +64,14 @@ export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean
       {error ? (
         <div className="flex h-full items-center text-white/70">{error}</div>
       ) : (
-        <div className="flex h-full flex-col justify-between">
+        <div
+          ref={dynamicMode ? undefined : staticScrollRef}
+          className={
+            dynamicMode
+              ? "flex h-full flex-col justify-between"
+              : "flex h-full min-h-0 flex-col gap-3 overflow-y-auto pr-1"
+          }
+        >
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10">
               <div className="text-xs text-white/65">Online</div>
@@ -75,11 +87,11 @@ export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean
             </div>
           </div>
 
-          {dynamicMode ? (
-            <div className="mt-4 rounded-2xl bg-white/5 ring-1 ring-inset ring-white/10">
+          {(dynamicMode || (data?.offline?.length ?? 0) > 0) ? (
+            <div className="rounded-2xl bg-white/5 ring-1 ring-inset ring-white/10">
               <div className="px-4 py-2 text-xs font-semibold text-white/60">Offline enheter</div>
               <div className="px-4 pb-3">
-                {(data?.offline ?? []).slice(0, offlineLimit).map((device) => (
+                {(data?.offline ?? []).slice(0, dynamicMode ? offlineLimit : Math.max(data?.offline?.length ?? 0, 20)).map((device) => (
                   <div key={device.name} className="flex items-center justify-between py-1 text-sm text-white/85">
                     <span className="truncate">{device.name}</span>
                     <span className="ml-3 shrink-0 text-xs text-white/55">

@@ -1,10 +1,12 @@
 "use client";
 
 import { Network } from "lucide-react";
+import { useRef } from "react";
 
 import type { LibreNmsSwitches } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
 import { useApiData } from "@/lib/hooks/use-api-data";
+import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
 import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
@@ -51,6 +53,9 @@ export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: bool
   const severity = severityFromLibre(data, error);
   const rowSpan = severity === "down" || severity === "degraded" ? 2 : 1;
   const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : "Live";
+  const staticScrollRef = useRef<HTMLDivElement>(null);
+
+  useAutoScroll(staticScrollRef, !dynamicMode, [data?.lastUpdatedAt, dynamicMode], 16);
 
   return (
     <ModuleCard
@@ -67,9 +72,10 @@ export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: bool
         <div className="flex h-full items-center text-white/70">{error}</div>
       ) : (
         <div
+          ref={dynamicMode ? undefined : staticScrollRef}
           className={
             dynamicMode
-              ? "flex h-full flex-col justify-between"
+              ? "flex h-full flex-col gap-3 justify-between"
               : "flex h-full min-h-0 flex-col gap-3 overflow-y-auto pr-1"
           }
         >

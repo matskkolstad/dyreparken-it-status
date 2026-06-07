@@ -1,10 +1,12 @@
 "use client";
 
 import { ListTodo } from "lucide-react";
+import { useRef } from "react";
 
 import type { AsanaMetrics } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
 import { useApiData } from "@/lib/hooks/use-api-data";
+import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
 function severityFromMetrics(m?: AsanaMetrics, error?: string) {
@@ -23,9 +25,12 @@ export function AsanaModule(props: { refreshToken: number; dynamicMode?: boolean
   const showLoading = isLoading && !data;
 
   const severity = severityFromMetrics(data, error);
-  const rowSpan = severity === "degraded" ? 2 : 1;
+  const rowSpan = !dynamicMode ? 2 : severity === "degraded" ? 2 : 1;
   const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : "Live";
   const latestTasks = data?.latestTasks ?? [];
+  const listRef = useRef<HTMLUListElement>(null);
+
+  useAutoScroll(listRef, !dynamicMode && latestTasks.length > 0, [data?.lastUpdatedAt, dynamicMode], 14);
 
   return (
     <ModuleCard
@@ -68,7 +73,7 @@ export function AsanaModule(props: { refreshToken: number; dynamicMode?: boolean
             {latestTasks.length === 0 ? (
               <div className="asana-latest-empty mt-1 text-xs text-white/70">Ingen nye saker.</div>
             ) : (
-              <ul className="asana-latest-list mt-2 flex-1 space-y-2 overflow-y-auto pr-1 text-xs text-white/85">
+              <ul ref={listRef} className="asana-latest-list mt-2 flex-1 space-y-2 overflow-y-auto pr-1 text-xs text-white/85">
                 {latestTasks.map((task) => (
                   <li
                     key={task.id}

@@ -1,11 +1,12 @@
 "use client";
 
 import { BusFront } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef } from "react";
 
 import type { EnturDepartures } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
 import { useApiData } from "@/lib/hooks/use-api-data";
+import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
 import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
@@ -38,27 +39,16 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
     rowHeight: 74,
     reservedHeight: 360,
   });
-  const staticLimit = 2;
-  const pageCount = Math.max(1, Math.ceil(departures.length / staticLimit));
-  const [pageIndex, setPageIndex] = useState(0);
-  const effectivePageIndex = pageCount > 0 ? pageIndex % pageCount : 0;
+  const staticScrollRef = useRef<HTMLDivElement>(null);
 
   const pageDepartures = useMemo(() => {
     if (dynamicMode) {
       return departures.slice(0, dynamicLimit);
     }
-    const start = effectivePageIndex * staticLimit;
-    return departures.slice(start, start + staticLimit);
-  }, [departures, dynamicLimit, dynamicMode, effectivePageIndex]);
+    return departures;
+  }, [departures, dynamicLimit, dynamicMode]);
 
-  useEffect(() => {
-    if (dynamicMode) return;
-    if (pageCount <= 1) return;
-    const timer = window.setInterval(() => {
-      setPageIndex((idx) => (idx + 1) % pageCount);
-    }, 8000);
-    return () => window.clearInterval(timer);
-  }, [dynamicMode, pageCount]);
+  useAutoScroll(staticScrollRef, !dynamicMode && departures.length > 2, [data?.lastUpdatedAt, dynamicMode], 16);
 
   const hasDepartures = departures.length > 0;
   const severity = error ? "unknown" : hasDepartures ? "ok" : "degraded";
@@ -87,7 +77,11 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
         <div className="flex h-full items-center text-white/70">{error}</div>
       ) : (
         <div className="flex h-full flex-col justify-between">
-          <div key={`entur-page-${dynamicMode ? "dynamic" : pageIndex}`} className="space-y-2 overflow-hidden">
+          <div
+            ref={dynamicMode ? undefined : staticScrollRef}
+            key={`entur-list-${dynamicMode ? "dynamic" : "static"}`}
+            className={dynamicMode ? "space-y-2 overflow-hidden" : "space-y-2 overflow-y-auto pr-1"}
+          >
             {pageDepartures.map((departure) => {
               const isDelayed = (departure.delayMinutes ?? 0) > 0;
               const aimedTime = formatClockTime(departure.aimedDepartureTime);
