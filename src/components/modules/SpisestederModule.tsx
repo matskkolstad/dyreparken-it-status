@@ -10,6 +10,13 @@ import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
 import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
+function formatDisplayDate(value?: string) {
+  if (!value) return "-";
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) return value;
+  return `${day}-${month}-${year}`;
+}
+
 export function SpisestederModule(props: { refreshToken: number; dynamicMode?: boolean }) {
   const dynamicMode = props.dynamicMode ?? false;
   const { data, error } = useApiData<DailyProgrammeFeed>("/api/dagsprogram", {
@@ -18,11 +25,11 @@ export function SpisestederModule(props: { refreshToken: number; dynamicMode?: b
   });
 
   const items = useMemo(() => data?.spisesteder ?? [], [data?.spisesteder]);
-  const dynamicLimit = useDynamicListLimit(dynamicMode, 5, {
-    min: 4,
-    max: 14,
-    rowHeight: 58,
-    reservedHeight: 320,
+  const dynamicLimit = useDynamicListLimit(dynamicMode, 9, {
+    min: 9,
+    max: 9,
+    rowHeight: 86,
+    reservedHeight: 300,
   });
 
   const pageItems = useMemo(() => {
@@ -42,7 +49,7 @@ export function SpisestederModule(props: { refreshToken: number; dynamicMode?: b
     <ModuleCard
       moduleId="spisesteder"
       title="Spisesteder"
-      subtitle={data?.date ? `Dato: ${data.date}` : undefined}
+      subtitle={data?.date ? `Dato: ${formatDisplayDate(data.date)}` : undefined}
       severity={severity}
       statusText={statusText}
       pulseKey={data?.lastUpdatedAt}
@@ -56,21 +63,23 @@ export function SpisestederModule(props: { refreshToken: number; dynamicMode?: b
           ref={dynamicMode ? undefined : staticScrollRef}
           className={
             dynamicMode
-              ? "space-y-2 overflow-hidden"
-              : "dp-auto-scroll space-y-2 overflow-y-auto pr-1"
+              ? "overflow-hidden"
+              : "dp-auto-scroll overflow-y-auto pr-1"
           }
         >
-          {pageItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between gap-2 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-inset ring-white/10"
-            >
-              <div className="truncate text-sm text-white/90">{item.name}</div>
-              <div className="shrink-0 rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-200 ring-1 ring-inset ring-emerald-400/30">
-                {item.openingTime}
+          <div className="grid grid-cols-3 gap-2">
+            {pageItems.map((item) => (
+              <div
+                key={item.id}
+                className="min-h-[86px] rounded-xl bg-white/5 px-3 py-2 ring-1 ring-inset ring-white/10"
+              >
+                <div className="line-clamp-2 text-sm text-white/90">{item.name}</div>
+                <div className="mt-2 inline-flex rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-200 ring-1 ring-inset ring-emerald-400/30">
+                  {item.openingTime}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
           {items.length ? null : (
             <div className="rounded-xl bg-white/5 px-3 py-2 text-sm text-white/65 ring-1 ring-inset ring-white/10">
               Ingen åpne spisesteder funnet.

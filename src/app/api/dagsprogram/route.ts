@@ -52,6 +52,25 @@ function formatTime(value?: string) {
   return value.slice(0, 5);
 }
 
+function osloClock(date = new Date()) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Oslo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+}
+
+function isWindowExpired(window: AlgoliaOpeningWindow, date: string, todayDate: string, nowClock: string) {
+  if (window.allday) return false;
+  if (date < todayDate) return true;
+  if (date > todayDate) return false;
+
+  const end = formatTime(window.to ?? window.from);
+  if (end === "Hele dagen") return false;
+  return end < nowClock;
+}
+
 function firstValidTime(windows: AlgoliaOpeningWindow[]) {
   const openWindow = windows.find((window) => !window.temporarily_closed);
   const fallback = windows[0];
@@ -61,12 +80,14 @@ function firstValidTime(windows: AlgoliaOpeningWindow[]) {
   return formatTime(target.from);
 }
 
-function toDailyTimes(windows: AlgoliaOpeningWindow[]) {
+function toDailyTimes(windows: AlgoliaOpeningWindow[], date: string, todayDate: string, nowClock: string) {
   const times: DailyProgrammeTime[] = windows.map((window) => {
+    const cancelled = Boolean(window.temporarily_closed) || isWindowExpired(window, date, todayDate, nowClock);
+
     if (window.allday) {
       return {
         label: "Hele dagen",
-        cancelled: Boolean(window.temporarily_closed),
+        cancelled,
       };
     }
 
@@ -75,7 +96,7 @@ function toDailyTimes(windows: AlgoliaOpeningWindow[]) {
 
     return {
       label: to && to !== "Hele dagen" ? `${from}–${to}` : from,
-      cancelled: Boolean(window.temporarily_closed),
+      cancelled,
     };
   });
 
@@ -114,11 +135,11 @@ async function queryCategory(date: string, category: "Dyrepresentasjoner" | "Spi
   return parsed.hits ?? [];
 }
 
-function toPresentation(hit: AlgoliaHit, date: string): DailyProgrammePresentation | null {
+function toPresentation(hit: AlgoliaHit, date: string, todayDate: string, nowClock: string): DailyProgrammePresentation | null {
   const windows = hit.opening_hours?.[date] ?? [];
   if (!windows.length) return null;
 
-  const times = toDailyTimes(windows);
+  const times = toDailyTimes(windows, date, todayDate, nowClock);
   const location = hit.taxonomies?.park_area?.[0]?.trim() || "Ukjent sted";
 
   return {
@@ -126,7 +147,7 @@ function toPresentation(hit: AlgoliaHit, date: string): DailyProgrammePresentati
     name: hit.post_title?.trim() || "Ukjent aktivitet",
     location,
     times,
-    hasCancelledTimes: times.some((time) => time.cancelled),
+    hasCancelledTimes: times.every((time) => time.cancelled),
   };
 }
 
@@ -148,6 +169,7 @@ export async function GET() {
   }
 
   const date = osloDateIso();
+  const nowClock = osloClock();
 
   try {
     const [presentationsHits, eateriesHits, shopsHits] = await Promise.all([
@@ -157,7 +179,7 @@ export async function GET() {
     ]);
 
     const dyrepresentasjoner = presentationsHits
-      .map((hit) => toPresentation(hit, date))
+      .map((hit) => toPresentation(hit, date, date, nowClock))
       .filter((item): item is DailyProgrammePresentation => item !== null)
       .sort((a, b) => a.times[0]!.label.localeCompare(b.times[0]!.label, "nb"));
 

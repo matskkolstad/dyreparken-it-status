@@ -10,6 +10,13 @@ import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
 import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
+function formatDisplayDate(value?: string) {
+  if (!value) return "-";
+  const [year, month, day] = value.split("-");
+  if (!year || !month || !day) return value;
+  return `${day}-${month}-${year}`;
+}
+
 export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicMode?: boolean }) {
   const dynamicMode = props.dynamicMode ?? false;
   const { data, error } = useApiData<DailyProgrammeFeed>("/api/dagsprogram", {
@@ -35,14 +42,27 @@ export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicM
   const staticScrollRef = useRef<HTMLDivElement>(null);
   useAutoScroll(staticScrollRef, !dynamicMode && items.length > 0, [data?.lastUpdatedAt, dynamicMode], 14);
 
-  const severity = error ? "unknown" : items.length > 0 ? "ok" : "degraded";
-  const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : items.length ? "Live" : "Ingen funn";
+  const hasActivePresentations = useMemo(
+    () => items.some((item) => item.times.some((time) => !time.cancelled)),
+    [items],
+  );
+
+  const severity = error ? "unknown" : hasActivePresentations ? "ok" : items.length > 0 ? "degraded" : "degraded";
+  const statusText = error
+    ? "Feil"
+    : data?.isDummyData
+      ? "Dummy"
+      : hasActivePresentations
+        ? "Live"
+        : items.length > 0
+          ? "Avlyst"
+          : "Ingen funn";
 
   return (
     <ModuleCard
       moduleId="dyrepresentasjoner"
       title="Dyrepresentasjoner"
-      subtitle={data?.date ? `Dato: ${data.date}` : undefined}
+      subtitle={data?.date ? `Dato: ${formatDisplayDate(data.date)}` : undefined}
       severity={severity}
       statusText={statusText}
       pulseKey={data?.lastUpdatedAt}
