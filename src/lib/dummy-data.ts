@@ -2,8 +2,8 @@ import type {
   AsanaMetrics,
   EnturDepartures,
   EsperDevices,
+  GraylogLogs,
   LibreNmsSwitches,
-  LibreNmsGraylog,
   MonotreeFeed,
   NewsFeed,
   NinjaOneAgents,
@@ -640,7 +640,7 @@ export const dummyLibreNms = (): LibreNmsSwitches => ({
   ...libreSamples[cycleIndex(libreSamples.length)]!,
 });
 
-const graylogSamples: Omit<LibreNmsGraylog, keyof ReturnType<typeof meta>>[] = [
+const graylogSamples: Omit<GraylogLogs, keyof ReturnType<typeof meta>>[] = [
   {
     entries: [
       {
@@ -741,7 +741,7 @@ const graylogSamples: Omit<LibreNmsGraylog, keyof ReturnType<typeof meta>>[] = [
   },
 ];
 
-export const dummyLibreGraylog = (): LibreNmsGraylog => ({
+export const dummyGraylog = (): GraylogLogs => ({
   ...meta(),
   ...graylogSamples[cycleIndex(graylogSamples.length)]!,
 });

@@ -6,7 +6,7 @@ export type DashboardModuleId =
   | "monotree"
   | "news"
   | "librenms"
-  | "libre-graylog"
+  | "graylog"
   | "ninjaone"
   | "esper"
   | "zoined"
@@ -85,7 +85,7 @@ export type LibreNmsSwitches = ApiMeta & {
   alertHistory: LibreNmsAlert[];
 };
 
-export type LibreNmsGraylogEntry = {
+export type GraylogEntry = {
   id: string;
   origin: string;
   timestamp: string;
@@ -95,8 +95,8 @@ export type LibreNmsGraylogEntry = {
   facility?: string;
 };
 
-export type LibreNmsGraylog = ApiMeta & {
-  entries: LibreNmsGraylogEntry[];
+export type GraylogLogs = ApiMeta & {
+  entries: GraylogEntry[];
 };
 
 export type NinjaOneAgents = ApiMeta & {

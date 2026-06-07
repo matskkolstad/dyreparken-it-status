@@ -2,7 +2,7 @@
 
 import { FileText } from "lucide-react";
 
-import type { LibreNmsGraylog } from "@/lib/types";
+import type { GraylogLogs } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
 import { useApiData } from "@/lib/hooks/use-api-data";
 import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
@@ -53,7 +53,7 @@ function levelTone(level?: string) {
 
 export function LibreGraylogModule(props: { refreshToken: number; dynamicMode?: boolean }) {
   const dynamicMode = props.dynamicMode ?? false;
-  const { data, error } = useApiData<LibreNmsGraylog>("/api/librenms/graylog", {
+  const { data, error } = useApiData<GraylogLogs>("/api/graylog", {
     intervalMs: DEFAULT_REFRESH_INTERVAL_MS,
     refreshToken: props.refreshToken,
   });
@@ -74,8 +74,8 @@ export function LibreGraylogModule(props: { refreshToken: number; dynamicMode?: 
 
   return (
     <ModuleCard
-      moduleId="libre-graylog"
-      title="Libre Graylog"
+      moduleId="graylog"
+      title="Graylog"
       severity={severity}
       statusText={statusText}
       pulseKey={data?.lastUpdatedAt}
@@ -122,7 +122,7 @@ export function LibreGraylogModule(props: { refreshToken: number; dynamicMode?: 
             ))}
             {!hasEntries ? (
               <div className="rounded-xl bg-white/5 px-3 py-2 text-sm text-white/65 ring-1 ring-inset ring-white/10">
-                Ingen graylog-meldinger funnet.
+                Ingen Graylog-meldinger funnet.
               </div>
             ) : null}
           </div>

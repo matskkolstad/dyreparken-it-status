@@ -38,7 +38,7 @@ function renderModule(id: DashboardModuleId, refreshToken: number, dynamicMode: 
       return <NewsModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "librenms":
       return <LibreNmsModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
-    case "libre-graylog":
+    case "graylog":
       return <LibreGraylogModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "ninjaone":
       return <NinjaOneModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;

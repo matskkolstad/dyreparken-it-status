@@ -6,7 +6,7 @@ Statusdashboard for IT-avdelingen i Dyreparken Kristiansand. Nettsiden samler da
 
 ## Funksjoner
 
-- **10 moduler** – Vær, Asana, Monotree, Nyheter, LibreNMS, Libre Graylog, NinjaOne, Esper, Zoined og Entur (bussavganger)
+- **10 moduler** – Vær, Asana, Monotree, Nyheter, LibreNMS, Graylog, NinjaOne, Esper, Zoined og Entur (bussavganger)
 - **Automatisk oppdatering** – Henter data fra API-ene hvert minutt i produksjon (10 sekunder i utvikling)
 - **Flerside-visning** – Modulene er fordelt på flere sider som roterer automatisk
 - **Manuell kontroll** – Pause/play rotering, hopp til neste side, manuell oppdatering
@@ -145,12 +145,15 @@ Bruker [LibreNMS API](https://docs.librenms.org/API/).
 2. Sett `LIBRENMS_BASE_URL` til din instans (f.eks. `https://librenms.yourdomain.local`)
 3. Valgfritt: bruk `LIBRENMS_SWITCH_REGEX` for å filtrere enheter (f.eks. `^SW-` for alle switcher)
 
-### Libre Graylog
+### Graylog
 
-Bruker LibreNMS syslog-API for å hente de siste Graylog-meldingene.
+Bruker Graylog REST API direkte via `GET /search/universal/relative`.
 
-1. Sett `LIBRENMS_GRAYLOG_HOSTNAME` til spesifikk host (eller `all`)
-2. Valgfritt: juster `LIBRENMS_GRAYLOG_LIMIT` for antall meldinger
+1. Sett `GRAYLOG_BASE_URL` (for eksempel `https://graylog.example.com`)
+2. Opprett access token i Graylog og sett `GRAYLOG_API_TOKEN`
+3. Valgfritt: finjuster søk med `GRAYLOG_QUERY`, `GRAYLOG_RANGE_SECONDS`, `GRAYLOG_LIMIT`, `GRAYLOG_SORT` og `GRAYLOG_FIELDS`
+
+Merk: Graylog API bruker HTTP Basic auth. Ved token-bruk sendes autentisering som `YourToken:token`.
 
 ### Nyheter (RSS)
 
