@@ -28,11 +28,13 @@ For each entry, include:
 - Hid visual scrollbars for auto-scrolling module areas to keep the UI clean while preserving scrolling behavior.
 - Updated `Nyheter` static mode to use full-list auto-scroll (no paging fallback) so scrolling always activates when needed.
 - Added more vertical spacing in `Esper` when dynamic mode is on.
+- Fixed auto-scroll engine precision/reliability by switching to fixed-interval stepping in `use-auto-scroll`, ensuring `Nyheter` static mode actually advances `scrollTop` continuously.
 
 #### How it was verified
 - `npm run lint` passed in demo checkout.
 - `npm run build` passed in demo checkout.
 - Browser reload on demo URL confirmed content remains inside cards in static mode.
+- Browser automation confirmed `Nyheter` static scroller advances over time (`scrollTop`: `66 -> 82.5 -> 102`).
 
 ### 2026-06-07 | Environment: production
 
