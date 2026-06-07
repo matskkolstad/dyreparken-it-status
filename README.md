@@ -384,10 +384,10 @@ Slas av/paa med knappen **Dynamisk** i toppbaren (pa som standard). I dynamisk m
 
 ### Skjermoppsett (1920x1080)
 
-Full oversikt er optimalisert for 1920x1080 og viser alle 8 moduler samtidig uten scrolling:
+Full oversikt er optimalisert for 1920x1080 for TV-bruk og viser alle 9 moduler uten at nedre kort klippes:
 
-- I vanlig modus brukes et 4x2 rutenett
-- I dynamisk modus brukes et fast 4x2 oppsett for oversikten og innholdet komprimeres for aa passe
+- I vanlig modus brukes et kompakt 3x3 rutenett (en rad per modul)
+- I dynamisk modus brukes komprimert fler-kolonneoppsett for oversikten
 
 For produksjon (systemd) ma du kjore `npm run build` og restarte tjenesten for at layoutendringer skal vises.
 

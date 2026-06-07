@@ -14,6 +14,19 @@ For each entry, include:
 
 ## Unreleased
 
+### 2026-06-07 | Environment: production
+
+#### What changed
+- Fixed TV-specific (`1920x1080`) static-mode layout on `Full oversikt` so all 9 modules fit without clipping.
+- Added a dedicated static oversikt grid for TV viewport (`3x3`) and forced `row-span=1` in that mode to prevent lower cards from being pushed out of view.
+- Tightened oversikt page container sizing (`dp-page-main`/`dp-page-motion`) for TV viewport so content stays within viewport and rotation UI remains visible/stable.
+- Updated README screen-layout section to reflect current 9-module TV behavior.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3000`)
+
 ### 2026-06-07 | Environment: demo
 
 #### What changed

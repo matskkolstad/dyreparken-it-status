@@ -159,6 +159,14 @@ body::before {
     min-height: 0;
   }
 
+  .dp-page-shell[data-page-id="oversikt"] .dp-page-main,
+  .dp-page-shell[data-page-id="oversikt"] .dp-page-motion {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
   .dp-page-shell[data-page-id="oversikt"] .dp-page-header {
     margin-bottom: 0.5rem;
   }
@@ -213,12 +221,28 @@ body::before {
     display: none;
   }
 
-  .dp-page-shell[data-page-id="oversikt"] .dp-grid {
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="false"] .dp-grid {
     gap: 0.6rem;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
     grid-auto-rows: minmax(0, 1fr);
     height: 100%;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="false"] .dp-grid > .dp-card {
+    --dp-row-span: 1;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="false"] .dp-page-footer {
+    display: none;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="false"] .dp-card {
+    padding: 0.65rem;
+  }
+
+  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="false"] .dp-card > div {
+    margin-top: 0.4rem;
   }
 
   .dp-page-shell[data-page-id="oversikt"] .dp-columns {
