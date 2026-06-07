@@ -96,6 +96,21 @@ cp .env.example .env.local
 
 *Påkrevd kun når `DUMMY_DATA=false`
 
+`.env.example` er med vilje versjonert i repoet som mal. Bruk den kun som eksempel, og legg faktiske hemmeligheter i `.env.local` (aldri i git).
+
+---
+
+## Endringsprosess og kvalitet
+
+Prosjektet har en standardisert flyt for sikre og sporbare endringer:
+
+- Opprett PR med sjekklisten i [`.github/pull_request_template.md`](.github/pull_request_template.md)
+- Kjor verifisering lokalt (`npm run lint` og `npm run build`) for du merger
+- CI kjører automatisk ved push/PR via [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+- Oppdater `README.md` nar oppforsel, oppsett eller drift endres
+- Oppdater [CHANGELOG.md](CHANGELOG.md) med dato, miljo, hva som ble endret og hvordan det ble verifisert
+- Ikke commit hemmeligheter (`.env*`, nøkler, tokens, credentials)
+
 ---
 
 ## API-integrasjoner
