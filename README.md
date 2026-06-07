@@ -219,6 +219,69 @@ sudo systemctl start dyreparken-it-status
 sudo systemctl status dyreparken-it-status
 ```
 
+### Eget demo-miljo pa samme server
+
+Det er mulig a kjore en separat demo-instans parallelt med produksjon.
+
+- Produksjon: `/root/projects/dyreparken-it-status` pa port `3000`
+- Demo: `/root/projects/dyreparken-it-status-demo` pa port `3001`
+
+Demo-instansen kan eksponeres direkte pa serverens IP, for eksempel:
+
+```text
+http://10.10.20.103:3001
+```
+
+For a holde demo og produksjon adskilt brukes en egen git-worktree for demo:
+
+```bash
+cd /root/projects/dyreparken-it-status
+git worktree add -b demo /root/projects/dyreparken-it-status-demo main
+cp /root/projects/dyreparken-it-status/.env.local /root/projects/dyreparken-it-status-demo/.env.local
+cd /root/projects/dyreparken-it-status-demo
+npm ci
+```
+
+Eksempel pa systemd-tjeneste for demo:
+
+```ini
+[Unit]
+Description=Dyreparken IT Status dashboard (demo)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/projects/dyreparken-it-status-demo
+Environment=NODE_ENV=production
+EnvironmentFile=-/root/projects/dyreparken-it-status-demo/.env.local
+ExecStartPre=/usr/bin/npm run build
+ExecStart=/usr/bin/npm run start -- --hostname 0.0.0.0 --port 3001
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Aktiver demo-tjenesten:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable dyreparken-it-status-demo
+sudo systemctl start dyreparken-it-status-demo
+sudo systemctl status dyreparken-it-status-demo
+```
+
+Ved videre utvikling i demo kan du jobbe direkte i demo-checkouten uten a pavirke produksjon:
+
+```bash
+cd /root/projects/dyreparken-it-status-demo
+git status
+git pull
+npm run build
+sudo systemctl restart dyreparken-it-status-demo
+```
+
 ### Nginx-konfigurasjon (reverse proxy)
 
 ```nginx
