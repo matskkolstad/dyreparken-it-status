@@ -17,6 +17,19 @@ For each entry, include:
 ### 2026-06-07 | Environment: demo
 
 #### What changed
+- Migrated log module data source from LibreNMS syslog endpoint to direct Graylog REST API (`/api/search/universal/relative`).
+- Added new backend route at `/api/graylog` with Graylog token/basic-auth support.
+- Renamed module display from `Libre Graylog` to `Graylog` and updated dashboard module id to `graylog`.
+- Added Graylog environment variables (`GRAYLOG_*`) and removed deprecated LibreNMS Graylog env usage.
+- Kept dummy data for Graylog in code, but disabled by default unless `GRAYLOG_ALLOW_DUMMY=true`.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+
+### 2026-06-07 | Environment: demo
+
+#### What changed
 - Fixed module overlap in static mode (`Dynamisk` off) by making card layout height-safe.
 - Updated `ModuleCard` static layout to use robust flex sizing (`min-h-0`, `overflow-hidden`, `flex-1`) instead of hardcoded height math.
 - Added internal scroll handling for content-heavy modules (`LibreNMS`, `Nyheter`) in static mode so content stays inside each card.

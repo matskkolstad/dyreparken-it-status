@@ -83,8 +83,16 @@ cp .env.example .env.local
 | `LIBRENMS_BASE_URL` | Ja* | Base-URL til LibreNMS |
 | `LIBRENMS_API_TOKEN` | Ja* | API-token fra LibreNMS |
 | `LIBRENMS_SWITCH_REGEX` | Nei | Regulært uttrykk for å filtrere switcher |
-| `LIBRENMS_GRAYLOG_HOSTNAME` | Nei | Hostname for Graylog-logs i LibreNMS (standard: `all`) |
-| `LIBRENMS_GRAYLOG_LIMIT` | Nei | Antall Graylog-meldinger (standard: `10`) |
+| `GRAYLOG_BASE_URL` | Ja* | Base-URL til Graylog |
+| `GRAYLOG_API_TOKEN` | Ja** | Access token for Graylog API |
+| `GRAYLOG_USERNAME` | Ja** | Graylog brukernavn (alternativ til token) |
+| `GRAYLOG_PASSWORD` | Ja** | Graylog passord (alternativ til token) |
+| `GRAYLOG_QUERY` | Nei | Graylog Lucene-query (standard: `*`) |
+| `GRAYLOG_RANGE_SECONDS` | Nei | Relativt tidsvindu i sekunder (standard: `1800`) |
+| `GRAYLOG_LIMIT` | Nei | Antall meldinger (standard: `10`) |
+| `GRAYLOG_SORT` | Nei | Sortering, f.eks. `timestamp:desc` |
+| `GRAYLOG_FIELDS` | Nei | Kommaseparerte felt fra Graylog |
+| `GRAYLOG_ALLOW_DUMMY` | Nei | `true` for å vise dummydata i Graylog-modul |
 | `NINJAONE_DEVICES_URL` | Ja* | URL til NinjaOne-enhetsendepunkt |
 | `NINJAONE_ACCESS_TOKEN` | Ja* | OAuth2 access token fra NinjaOne |
 | `ESPER_DEVICES_URL` | Ja* | URL til Esper-enhetsendepunkt |
@@ -97,6 +105,8 @@ cp .env.example .env.local
 | `ENTUR_MAX_DEPARTURES` | Nei | Hvor mange avganger som hentes (standard: `10`) |
 
 *Påkrevd kun når `DUMMY_DATA=false`
+
+**Bruk enten `GRAYLOG_API_TOKEN`, eller `GRAYLOG_USERNAME` + `GRAYLOG_PASSWORD`.
 
 `.env.example` er med vilje versjonert i repoet som mal. Bruk den kun som eksempel, og legg faktiske hemmeligheter i `.env.local` (aldri i git).
 
