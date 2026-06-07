@@ -22,6 +22,7 @@ For each entry, include:
 - Renamed module display from `Libre Graylog` to `Graylog` and updated dashboard module id to `graylog`.
 - Added Graylog environment variables (`GRAYLOG_*`) and removed deprecated LibreNMS Graylog env usage.
 - Kept dummy data for Graylog in code, but disabled by default unless `GRAYLOG_ALLOW_DUMMY=true`.
+- Updated Graylog API route to return HTTP errors when Graylog configuration is missing or upstream requests fail, so module status shows `Feil` instead of `Live`.
 
 #### How it was verified
 - `npm run lint`

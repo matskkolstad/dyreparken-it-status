@@ -81,14 +81,6 @@ function toEntry(envelope: GraylogMessageEnvelope, index: number): GraylogEntry 
   };
 }
 
-function emptyResult(): GraylogLogs {
-  return {
-    lastUpdatedAt: new Date().toISOString(),
-    isDummyData: false,
-    entries: [],
-  };
-}
-
 export async function GET() {
   const allowDummy = (process.env.GRAYLOG_ALLOW_DUMMY ?? "false").toLowerCase() === "true";
   if (allowDummy) {
@@ -97,8 +89,17 @@ export async function GET() {
 
   const baseUrl = process.env.GRAYLOG_BASE_URL;
   const authHeader = buildAuthHeader();
-  if (!baseUrl || !authHeader) {
-    return NextResponse.json(emptyResult());
+  if (!baseUrl) {
+    return NextResponse.json(
+      { error: "Graylog is not configured (missing GRAYLOG_BASE_URL)." },
+      { status: 503 },
+    );
+  }
+  if (!authHeader) {
+    return NextResponse.json(
+      { error: "Graylog is not configured (missing GRAYLOG_API_TOKEN or username/password)." },
+      { status: 503 },
+    );
   }
 
   const query = process.env.GRAYLOG_QUERY ?? "*";
@@ -138,7 +139,11 @@ export async function GET() {
       isDummyData: false,
       entries,
     } satisfies GraylogLogs);
-  } catch {
-    return NextResponse.json(emptyResult());
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      { error: `Graylog request failed: ${detail}` },
+      { status: 502 },
+    );
   }
 }
