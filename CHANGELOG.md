@@ -17,6 +17,19 @@ For each entry, include:
 ### 2026-06-07 | Environment: production
 
 #### What changed
+- Added three new modules backed by Dyreparken dagsprogram data on `Drift & Gjester`: `Dyrepresentasjoner`, `Spisesteder`, and `Butikker`.
+- Implemented a new backend route `/api/dagsprogram` that reads the same data source as Dyreparken.no (Algolia `wp_posts_poi`) for today (Oslo date).
+- `Dyrepresentasjoner` now shows name, place, and all time slots for the day, and marks cancelled time slots with red styling and module-level `Avlyst` indicator.
+- `Spisesteder` and `Butikker` now show only open entries (closed/temporarily unavailable entries filtered out) with name + opening time.
+- Ensured all relevant items are included by loading full category result sets (`hitsPerPage=999`) instead of only visible carousel slices.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+
+### 2026-06-07 | Environment: production
+
+#### What changed
 - Fixed TV-specific (`1920x1080`) static-mode layout on `Full oversikt` so all 9 modules fit without clipping.
 - Added a dedicated static oversikt grid for TV viewport (`3x3`) and forced `row-span=1` in that mode to prevent lower cards from being pushed out of view.
 - Tightened oversikt page container sizing (`dp-page-main`/`dp-page-motion`) for TV viewport so content stays within viewport and rotation UI remains visible/stable.

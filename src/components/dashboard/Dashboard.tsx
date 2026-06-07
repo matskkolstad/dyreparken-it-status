@@ -16,6 +16,8 @@ import { useNow } from "@/lib/hooks/use-now";
 import { useApiData } from "@/lib/hooks/use-api-data";
 
 import { AsanaModule } from "@/components/modules/AsanaModule";
+import { ButikkerModule } from "@/components/modules/ButikkerModule";
+import { DyrepresentasjonerModule } from "@/components/modules/DyrepresentasjonerModule";
 import { EnturModule } from "@/components/modules/EnturModule";
 import { EsperModule } from "@/components/modules/EsperModule";
 import { LibreGraylogModule } from "@/components/modules/LibreGraylogModule";
@@ -23,6 +25,7 @@ import { LibreNmsModule } from "@/components/modules/LibreNmsModule";
 import { MonotreeModule } from "@/components/modules/MonotreeModule";
 import { NewsModule } from "@/components/modules/NewsModule";
 import { NinjaOneModule } from "@/components/modules/NinjaOneModule";
+import { SpisestederModule } from "@/components/modules/SpisestederModule";
 import { WeatherModule } from "@/components/modules/WeatherModule";
 import { ZoinedModule } from "@/components/modules/ZoinedModule";
 
@@ -30,6 +33,12 @@ function renderModule(id: DashboardModuleId, refreshToken: number, dynamicMode: 
   switch (id) {
     case "weather":
       return <WeatherModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
+    case "dyrepresentasjoner":
+      return <DyrepresentasjonerModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
+    case "spisesteder":
+      return <SpisestederModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
+    case "butikker":
+      return <ButikkerModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "asana":
       return <AsanaModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "monotree":

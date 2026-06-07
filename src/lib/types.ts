@@ -10,7 +10,10 @@ export type DashboardModuleId =
   | "ninjaone"
   | "esper"
   | "zoined"
-  | "entur";
+  | "entur"
+  | "dyrepresentasjoner"
+  | "spisesteder"
+  | "butikker";
 
 export type DashboardPage = {
   id: string;
@@ -138,4 +141,31 @@ export type OpeningHours = ApiMeta & {
   dyreparken: string;
   badeland: string;
   sourceUrl: string;
+};
+
+export type DailyProgrammeTime = {
+  label: string;
+  cancelled: boolean;
+};
+
+export type DailyProgrammePresentation = {
+  id: string;
+  name: string;
+  location: string;
+  times: DailyProgrammeTime[];
+  hasCancelledTimes: boolean;
+};
+
+export type DailyProgrammeListingItem = {
+  id: string;
+  name: string;
+  openingTime: string;
+};
+
+export type DailyProgrammeFeed = ApiMeta & {
+  sourceUrl: string;
+  date: string;
+  dyrepresentasjoner: DailyProgrammePresentation[];
+  spisesteder: DailyProgrammeListingItem[];
+  butikker: DailyProgrammeListingItem[];
 };

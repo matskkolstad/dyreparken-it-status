@@ -1,5 +1,6 @@
 import type {
   AsanaMetrics,
+  DailyProgrammeFeed,
   EnturDepartures,
   EsperDevices,
   GraylogLogs,
@@ -1023,4 +1024,55 @@ const enturSamples: Omit<EnturDepartures, keyof ReturnType<typeof meta>>[] = [
 export const dummyEntur = (): EnturDepartures => ({
   ...meta(),
   ...enturSamples[cycleIndex(enturSamples.length)]!,
+});
+
+export const dummyDailyProgramme = (): DailyProgrammeFeed => ({
+  ...meta(),
+  sourceUrl: "https://www.dyreparken.no/dagsprogram/",
+  date: new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Europe/Oslo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date()),
+  dyrepresentasjoner: [
+    {
+      id: "dummy-dyr-1",
+      name: "Ringhalelemur",
+      location: "Juliusskogen",
+      times: [
+        { label: "11:30", cancelled: false },
+        { label: "14:00", cancelled: false },
+      ],
+      hasCancelledTimes: false,
+    },
+    {
+      id: "dummy-dyr-2",
+      name: "Love",
+      location: "Afrika",
+      times: [
+        { label: "10:30", cancelled: true },
+      ],
+      hasCancelledTimes: true,
+    },
+    {
+      id: "dummy-dyr-3",
+      name: "Oter",
+      location: "Nordisk villmark",
+      times: [
+        { label: "12:15", cancelled: false },
+      ],
+      hasCancelledTimes: false,
+    },
+  ],
+  spisesteder: [
+    { id: "dummy-spis-1", name: "Potetbakeriet", openingTime: "11:00" },
+    { id: "dummy-spis-2", name: "Sabla poteter", openingTime: "12:00" },
+    { id: "dummy-spis-3", name: "Bananas spiseri", openingTime: "07:30" },
+  ],
+  butikker: [
+    { id: "dummy-butikk-1", name: "Gjesteservice og butikk", openingTime: "09:00" },
+    { id: "dummy-butikk-2", name: "Rubbel og bit", openingTime: "10:00" },
+    { id: "dummy-butikk-3", name: "Eventyrskogen butikk", openingTime: "10:00" },
+  ],
 });

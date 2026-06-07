@@ -206,6 +206,16 @@ Bruker Entur Real-time GraphQL API for å vise neste bussavganger fra Dyreparken
 
 Foresporslene sendes med header `ET-Client-Name`, og modulen viser de neste relevante bussavgangene med sanntidsindikator.
 
+### Dagsprogram (Dyrepresentasjoner, Spisesteder, Butikker)
+
+Modulene `Dyrepresentasjoner`, `Spisesteder` og `Butikker` bruker Dyreparkens dagsprogram-data for dagens dato.
+
+- Kilde: Algolia-indeksen som driver `dyreparken.no/dagsprogram`
+- `Dyrepresentasjoner` viser navn, sted og alle klokkeslett, og markerer avlyste tider i rodt
+- `Spisesteder` og `Butikker` viser kun apne elementer med navn + apningstid
+
+Ingen ekstra miljo-variabler kreves for denne integrasjonen.
+
 ---
 
 ## Deployment på Linux-server

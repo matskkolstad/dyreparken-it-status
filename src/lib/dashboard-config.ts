@@ -34,6 +34,9 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
     title: "Drift & Gjester",
     modules: [
       "weather",
+      "dyrepresentasjoner",
+      "spisesteder",
+      "butikker",
       "asana",
       "monotree",
       "zoined",
