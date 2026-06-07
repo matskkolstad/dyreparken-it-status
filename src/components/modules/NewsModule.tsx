@@ -76,7 +76,13 @@ export function NewsModule(props: { refreshToken: number; dynamicMode?: boolean 
       {error ? (
         <div className="flex h-full items-center text-white/70">{error}</div>
       ) : (
-        <div className="flex h-full flex-col">
+        <div
+          className={
+            dynamicMode
+              ? "flex h-full flex-col"
+              : "flex h-full min-h-0 flex-col overflow-y-auto pr-1"
+          }
+        >
           <div className="mt-2 pb-3">
             <div
               key={`news-page-${dynamicMode ? "dynamic" : pageIndex}`}

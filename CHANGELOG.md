@@ -14,6 +14,18 @@ For each entry, include:
 
 ## Unreleased
 
+### 2026-06-07 | Environment: demo
+
+#### What changed
+- Fixed module overlap in static mode (`Dynamisk` off) by making card layout height-safe.
+- Updated `ModuleCard` static layout to use robust flex sizing (`min-h-0`, `overflow-hidden`, `flex-1`) instead of hardcoded height math.
+- Added internal scroll handling for content-heavy modules (`LibreNMS`, `Nyheter`) in static mode so content stays inside each card.
+
+#### How it was verified
+- `npm run lint` passed in demo checkout.
+- `npm run build` passed in demo checkout.
+- Browser reload on demo URL confirmed content remains inside cards in static mode.
+
 ### 2026-06-07 | Environment: production
 
 #### What changed

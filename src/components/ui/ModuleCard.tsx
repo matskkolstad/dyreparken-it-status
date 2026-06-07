@@ -53,7 +53,7 @@ export function ModuleCard(props: {
         "dp-card break-inside-avoid",
         dynamicMode
           ? "rounded-2xl bg-[color:var(--card)] ring-1 ring-inset"
-          : "h-full rounded-2xl bg-[color:var(--card)] ring-1 ring-inset",
+          : "h-full min-h-0 overflow-hidden rounded-2xl bg-[color:var(--card)] ring-1 ring-inset flex flex-col",
         "px-5 py-5 md:px-6 md:py-6",
         styles.ring,
         "shadow-[0_0_0_1px_rgba(255,255,255,0.04)]",
@@ -91,10 +91,10 @@ export function ModuleCard(props: {
         </div>
         {props.right ? <div className="shrink-0">{props.right}</div> : null}
       </header>
-      <div className={dynamicMode ? "mt-4" : "mt-4 h-[calc(100%-3.25rem)]"}>
+      <div className={dynamicMode ? "mt-4" : "mt-4 min-h-0 flex-1"}>
         <div
           key={props.pulseKey ?? "stable"}
-          className={dynamicMode ? "animate-monotree-scroll" : "h-full animate-monotree-scroll"}
+          className={dynamicMode ? "animate-monotree-scroll" : "h-full min-h-0 animate-monotree-scroll"}
         >
           {props.children}
         </div>
