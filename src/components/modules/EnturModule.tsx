@@ -41,18 +41,15 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
   const staticLimit = 2;
   const pageCount = Math.max(1, Math.ceil(departures.length / staticLimit));
   const [pageIndex, setPageIndex] = useState(0);
+  const effectivePageIndex = pageCount > 0 ? pageIndex % pageCount : 0;
 
   const pageDepartures = useMemo(() => {
     if (dynamicMode) {
       return departures.slice(0, dynamicLimit);
     }
-    const start = pageIndex * staticLimit;
+    const start = effectivePageIndex * staticLimit;
     return departures.slice(start, start + staticLimit);
-  }, [departures, dynamicLimit, dynamicMode, pageIndex]);
-
-  useEffect(() => {
-    setPageIndex(0);
-  }, [data?.lastUpdatedAt]);
+  }, [departures, dynamicLimit, dynamicMode, effectivePageIndex]);
 
   useEffect(() => {
     if (dynamicMode) return;

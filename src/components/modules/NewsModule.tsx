@@ -39,17 +39,14 @@ export function NewsModule(props: { refreshToken: number; dynamicMode?: boolean 
   const pageCount = Math.max(1, Math.ceil(items.length / staticLimit));
 
   const [pageIndex, setPageIndex] = useState(0);
+  const effectivePageIndex = pageCount > 0 ? pageIndex % pageCount : 0;
   const pageItems = useMemo(() => {
     if (dynamicMode) {
       return items.slice(0, dynamicLimit);
     }
-    const start = pageIndex * staticLimit;
+    const start = effectivePageIndex * staticLimit;
     return items.slice(start, start + staticLimit);
-  }, [dynamicLimit, dynamicMode, pageIndex, items]);
-
-  useEffect(() => {
-    setPageIndex(0);
-  }, [data?.lastUpdatedAt]);
+  }, [dynamicLimit, dynamicMode, effectivePageIndex, items]);
 
   useEffect(() => {
     if (dynamicMode) return;

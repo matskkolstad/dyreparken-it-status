@@ -27,18 +27,14 @@ export function MonotreeModule(props: { refreshToken: number; dynamicMode?: bool
   const pageCount = Math.max(1, Math.ceil(posts.length / staticLimit));
 
   const [pageIndex, setPageIndex] = useState(0);
+  const effectivePageIndex = pageCount > 0 ? pageIndex % pageCount : 0;
   const pagePosts = useMemo(() => {
     if (dynamicMode) {
       return posts.slice(0, dynamicLimit);
     }
-    const start = pageIndex * staticLimit;
+    const start = effectivePageIndex * staticLimit;
     return posts.slice(start, start + staticLimit);
-  }, [dynamicLimit, dynamicMode, pageIndex, posts]);
-
-  useEffect(() => {
-    setPageIndex(0);
-  }, [data?.lastUpdatedAt]);
-
+  }, [dynamicLimit, dynamicMode, effectivePageIndex, posts]);
 
   useEffect(() => {
     if (dynamicMode) return;

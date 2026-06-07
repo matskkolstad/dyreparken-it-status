@@ -55,19 +55,6 @@ function normalizeList(raw: EsperDevicesResponse): EsperDevice[] {
   return [];
 }
 
-function isOnline(device: EsperDevice) {
-  if (typeof device?.isOnline === "boolean") return device.isOnline;
-  if (typeof device?.online === "boolean") return device.online;
-  if (device?.status === 1 || device?.status === "1" || device?.status === 60 || device?.status === "60") {
-    return true;
-  }
-  if (device?.state === 1 || device?.state === "1") return true;
-  if (device?.status === 20 || device?.status === "20") return false;
-  if (device?.state === 20 || device?.state === "20") return false;
-  const s = typeof device?.status === "string" ? device.status.toLowerCase() : "";
-  return ["online", "connected", "active"].includes(s);
-}
-
 function deviceName(device: EsperDevice, index: number) {
   return (
     device.alias_name ??

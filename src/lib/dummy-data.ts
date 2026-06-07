@@ -3,7 +3,6 @@ import type {
   EnturDepartures,
   EsperDevices,
   LibreNmsSwitches,
-  LibreNmsAlert,
   LibreNmsGraylog,
   MonotreeFeed,
   NewsFeed,

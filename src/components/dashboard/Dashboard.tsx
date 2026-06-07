@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { Pause, Play, RefreshCw, SkipForward, Timer } from "lucide-react";
 import { cloneElement, useEffect, useState } from "react";
@@ -136,20 +137,38 @@ const STORAGE_KEYS = {
   dynamicMode: "dp.status.dynamicMode",
 };
 
+function readStoredBool(key: string, fallback: boolean) {
+  if (typeof window === "undefined") return fallback;
+  const value = window.localStorage.getItem(key);
+  if (value === null) return fallback;
+  return value === "true";
+}
+
+function readStoredDuration(fallback: number) {
+  if (typeof window === "undefined") return fallback;
+  const value = window.localStorage.getItem(STORAGE_KEYS.pageDurationSeconds);
+  if (value === null) return fallback;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return parsed >= 5 && parsed <= 300 ? parsed : fallback;
+}
+
 export function Dashboard() {
   const now = useNow(1000);
   const pages = DASHBOARD_PAGES;
 
-  const [isClient, setIsClient] = useState(false);
-
   const [refreshToken, setRefreshToken] = useState(0);
   const [activePageIndex, setActivePageIndex] = useState(0);
 
-  const [rotationEnabled, setRotationEnabled] = useState(DEFAULT_ROTATION_ENABLED);
-  const [pageDurationSeconds, setPageDurationSeconds] = useState(
-    DEFAULT_PAGE_DURATION_SECONDS,
+  const [rotationEnabled, setRotationEnabled] = useState(() =>
+    readStoredBool(STORAGE_KEYS.rotationEnabled, DEFAULT_ROTATION_ENABLED),
   );
-  const [dynamicMode, setDynamicMode] = useState(true);
+  const [pageDurationSeconds, setPageDurationSeconds] = useState(() =>
+    readStoredDuration(DEFAULT_PAGE_DURATION_SECONDS),
+  );
+  const [dynamicMode, setDynamicMode] = useState(() =>
+    readStoredBool(STORAGE_KEYS.dynamicMode, true),
+  );
   const [controlsHidden, setControlsHidden] = useState(false);
 
   useEffect(() => {
@@ -163,30 +182,6 @@ export function Dashboard() {
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEYS.dynamicMode, String(dynamicMode));
   }, [dynamicMode]);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    const storedRotation = window.localStorage.getItem(STORAGE_KEYS.rotationEnabled);
-    if (storedRotation !== null) {
-      setRotationEnabled(storedRotation === "true");
-    }
-
-    const storedDuration = window.localStorage.getItem(STORAGE_KEYS.pageDurationSeconds);
-    if (storedDuration !== null) {
-      const parsed = Number(storedDuration);
-      if (Number.isFinite(parsed) && parsed >= 5 && parsed <= 300) {
-        setPageDurationSeconds(parsed);
-      }
-    }
-
-    const storedDynamicMode = window.localStorage.getItem(STORAGE_KEYS.dynamicMode);
-    if (storedDynamicMode !== null) {
-      setDynamicMode(storedDynamicMode === "true");
-    }
-  }, []);
 
   const activePage = pages[activePageIndex] ?? pages[0]!;
 
@@ -203,7 +198,6 @@ export function Dashboard() {
   }, [controlsHidden]);
 
   useEffect(() => {
-    if (!isClient) return;
     let idleTimer: number | undefined;
 
     const setIdleTimer = () => {
@@ -216,7 +210,7 @@ export function Dashboard() {
       setIdleTimer();
     };
 
-    markActive();
+    setIdleTimer();
     window.addEventListener("mousemove", markActive, { passive: true });
     window.addEventListener("mousedown", markActive, { passive: true });
     window.addEventListener("keydown", markActive);
@@ -229,7 +223,7 @@ export function Dashboard() {
       window.removeEventListener("keydown", markActive);
       window.removeEventListener("touchstart", markActive);
     };
-  }, [isClient]);
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
@@ -237,12 +231,6 @@ export function Dashboard() {
   }, [activePage.id]);
 
   useEffect(() => {
-    if (!isClient) return;
-    let timerA: number | undefined;
-    let timerB: number | undefined;
-    let intervalId: number | undefined;
-    let stopId: number | undefined;
-
     const checkOverflow = () => {
       const shouldCheck = activePage.id === "oversikt" && dynamicMode;
       if (!shouldCheck) {
@@ -257,24 +245,23 @@ export function Dashboard() {
       document.documentElement.dataset.forceFit = overflow ? "true" : "false";
     };
 
-    timerA = window.setTimeout(checkOverflow, 120);
-    timerB = window.setTimeout(checkOverflow, 800);
-    intervalId = window.setInterval(checkOverflow, 1000);
-    stopId = window.setTimeout(() => {
-      if (intervalId) window.clearInterval(intervalId);
+    const localTimerA = window.setTimeout(checkOverflow, 120);
+    const localTimerB = window.setTimeout(checkOverflow, 800);
+    const intervalId = window.setInterval(checkOverflow, 1000);
+    const localStopId = window.setTimeout(() => {
+      window.clearInterval(intervalId);
     }, 12_000);
     window.addEventListener("resize", checkOverflow);
 
     return () => {
-      if (timerA) window.clearTimeout(timerA);
-      if (timerB) window.clearTimeout(timerB);
-      if (intervalId) window.clearInterval(intervalId);
-      if (stopId) window.clearTimeout(stopId);
+      window.clearTimeout(localTimerA);
+      window.clearTimeout(localTimerB);
+      window.clearInterval(intervalId);
+      window.clearTimeout(localStopId);
       window.removeEventListener("resize", checkOverflow);
     };
-  }, [activePage.id, dynamicMode, isClient]);
+  }, [activePage.id, dynamicMode]);
   const rotationIsActive = rotationEnabled && pages.length > 1;
-  const rotationIsActiveForRender = isClient ? rotationIsActive : DEFAULT_ROTATION_ENABLED;
 
   useEffect(() => {
     if (!rotationIsActive) return;
@@ -295,9 +282,11 @@ export function Dashboard() {
         {/* Branding */}
         <div className="min-w-0">
           <div className="flex items-center gap-3">
-            <img
+            <Image
               src="/logo_diamant_hvit.png"
               alt="Dyreparken"
+              width={64}
+              height={64}
               className="h-16 w-16 object-contain"
             />
             <div className="min-w-0 flex flex-col justify-center">
@@ -313,97 +302,91 @@ export function Dashboard() {
 
         {/* Controls + Clock */}
         <div className="flex items-center gap-3 shrink-0">
-          {isClient ? (
-            <>
-              <div className="dp-controls-hideable hidden md:flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 ring-1 ring-inset ring-white/10">
-                <Timer className="h-4 w-4 text-white/70" aria-hidden="true" />
-                <input
-                  className="w-12 bg-transparent text-right text-sm font-semibold text-white/90 outline-none"
-                  value={pageDurationSeconds}
-                  onChange={(e) => {
-                    const next = Number(e.target.value);
-                    if (Number.isFinite(next)) setPageDurationSeconds(next);
-                  }}
-                  inputMode="numeric"
-                  aria-label="Sekunder per side"
-                />
-                <span className="text-sm text-white/70">sek</span>
+          <div className="dp-controls-hideable hidden md:flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 ring-1 ring-inset ring-white/10">
+            <Timer className="h-4 w-4 text-white/70" aria-hidden="true" />
+            <input
+              className="w-12 bg-transparent text-right text-sm font-semibold text-white/90 outline-none"
+              value={pageDurationSeconds}
+              onChange={(e) => {
+                const next = Number(e.target.value);
+                if (Number.isFinite(next)) setPageDurationSeconds(next);
+              }}
+              inputMode="numeric"
+              aria-label="Sekunder per side"
+            />
+            <span className="text-sm text-white/70">sek</span>
+          </div>
+
+          <button
+            type="button"
+            className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors"
+            onClick={() => setRotationEnabled((v) => !v)}
+            aria-pressed={rotationEnabled}
+          >
+            {rotationEnabled ? (
+              <>
+                <Pause className="h-4 w-4" aria-hidden="true" />
+                Pause
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4" aria-hidden="true" />
+                Spill
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors disabled:opacity-40"
+            onClick={() => setActivePageIndex((i) => (i + 1) % pages.length)}
+            disabled={pages.length < 2}
+          >
+            <SkipForward className="h-4 w-4" aria-hidden="true" />
+            Neste
+          </button>
+
+          <button
+            type="button"
+            className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-[color:rgba(15,184,137,0.16)] px-4 py-2 text-sm font-semibold text-white/95 ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)] hover:bg-[color:rgba(15,184,137,0.22)] transition-colors"
+            onClick={() => setRefreshToken((t) => t + 1)}
+          >
+            <RefreshCw className="h-4 w-4" aria-hidden="true" />
+            Oppdater
+          </button>
+
+          <button
+            type="button"
+            className={[
+              "dp-controls-hideable",
+              "inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-inset transition-colors",
+              dynamicMode
+                ? "bg-[color:rgba(98,182,255,0.16)] text-white/95 ring-[color:rgba(98,182,255,0.35)] hover:bg-[color:rgba(98,182,255,0.24)]"
+                : "bg-white/5 text-white/90 ring-white/10 hover:bg-white/10",
+            ].join(" ")}
+            onClick={() => setDynamicMode((v) => !v)}
+            aria-pressed={dynamicMode}
+          >
+            Dynamisk
+          </button>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden md:block">
+              <WeatherWidget refreshToken={refreshToken} />
+            </div>
+            <div className="hidden md:block">
+              <OpeningHoursWidget refreshToken={refreshToken} />
+            </div>
+            {/* Clock */}
+            <div className="dp-header-widget ml-1 rounded-2xl bg-white/5 px-5 py-2 text-right ring-1 ring-inset ring-white/10 min-w-[130px]">
+              <div className="text-xl font-bold tabular-nums text-white/95 md:text-2xl leading-tight">
+                {formatClock(now)}
               </div>
-
-              <button
-                type="button"
-                className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors"
-                onClick={() => setRotationEnabled((v) => !v)}
-                aria-pressed={rotationEnabled}
-              >
-                {rotationEnabled ? (
-                  <>
-                    <Pause className="h-4 w-4" aria-hidden="true" />
-                    Pause
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-4 w-4" aria-hidden="true" />
-                    Spill
-                  </>
-                )}
-              </button>
-
-              <button
-                type="button"
-                className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors disabled:opacity-40"
-                onClick={() => setActivePageIndex((i) => (i + 1) % pages.length)}
-                disabled={pages.length < 2}
-              >
-                <SkipForward className="h-4 w-4" aria-hidden="true" />
-                Neste
-              </button>
-
-              <button
-                type="button"
-                className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-[color:rgba(15,184,137,0.16)] px-4 py-2 text-sm font-semibold text-white/95 ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)] hover:bg-[color:rgba(15,184,137,0.22)] transition-colors"
-                onClick={() => setRefreshToken((t) => t + 1)}
-              >
-                <RefreshCw className="h-4 w-4" aria-hidden="true" />
-                Oppdater
-              </button>
-
-              <button
-                type="button"
-                className={[
-                  "dp-controls-hideable",
-                  "inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-inset transition-colors",
-                  dynamicMode
-                    ? "bg-[color:rgba(98,182,255,0.16)] text-white/95 ring-[color:rgba(98,182,255,0.35)] hover:bg-[color:rgba(98,182,255,0.24)]"
-                    : "bg-white/5 text-white/90 ring-white/10 hover:bg-white/10",
-                ].join(" ")}
-                onClick={() => setDynamicMode((v) => !v)}
-                aria-pressed={dynamicMode}
-              >
-                Dynamisk
-              </button>
-
-              <div className="flex items-center gap-3">
-                <div className="hidden md:block">
-                  <WeatherWidget refreshToken={refreshToken} />
-                </div>
-                <div className="hidden md:block">
-                  <OpeningHoursWidget refreshToken={refreshToken} />
-                </div>
-                {/* Clock */}
-                <div className="dp-header-widget ml-1 rounded-2xl bg-white/5 px-5 py-2 text-right ring-1 ring-inset ring-white/10 min-w-[130px]">
-                  <div className="text-xl font-bold tabular-nums text-white/95 md:text-2xl leading-tight">
-                    {formatClock(now)}
-                  </div>
-                  <div className="text-xs text-white/50 capitalize">
-                    {formatDate(now)}
-                  </div>
-                </div>
+              <div className="text-xs text-white/50 capitalize">
+                {formatDate(now)}
               </div>
-            </>
-          ) : (
-            <div className="h-10 w-[320px]" aria-hidden="true" />
-          )}
+            </div>
+          </div>
         </div>
       </header>
 

@@ -22,10 +22,7 @@ export function useDynamicListLimit(
   const [limit, setLimit] = useState(fallback);
 
   useEffect(() => {
-    if (!enabled) {
-      setLimit(fallback);
-      return;
-    }
+    if (!enabled) return;
 
     const calculate = () => {
       const viewportHeight = window.innerHeight;
