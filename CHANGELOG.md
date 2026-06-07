@@ -17,6 +17,19 @@ For each entry, include:
 ### 2026-06-07 | Environment: production
 
 #### What changed
+- Updated dagsprogram module date display format to `dd-mm-yyyy`.
+- Updated `Spisesteder` and `Butikker` modules to compact `3x3` card grids to reduce whitespace and improve readability.
+- Ensured `Spisesteder`/`Butikker` continue to show opening time only (not closing time).
+- Improved `Dyrepresentasjoner` avlyst logic so passed/cancelled time slots are marked red, and a presentation is marked `Avlyst` only when all its time slots are cancelled/passed.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3000`)
+
+### 2026-06-07 | Environment: production
+
+#### What changed
 - Added three new modules backed by Dyreparken dagsprogram data on `Drift & Gjester`: `Dyrepresentasjoner`, `Spisesteder`, and `Butikker`.
 - Implemented a new backend route `/api/dagsprogram` that reads the same data source as Dyreparken.no (Algolia `wp_posts_poi`) for today (Oslo date).
 - `Dyrepresentasjoner` now shows name, place, and all time slots for the day, and marks cancelled time slots with red styling and module-level `Avlyst` indicator.
