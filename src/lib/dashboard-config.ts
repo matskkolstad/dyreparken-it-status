@@ -10,13 +10,11 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
     modules: [
       "asana",
       "monotree",
-      "news",
       "librenms",
       "graylog",
       "ninjaone",
       "esper",
       "zoined",
-      "entur",
     ] satisfies DashboardModuleId[],
   },
   {
@@ -38,7 +36,6 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
       "spisesteder",
       "butikker",
       "zoined",
-      "entur",
     ] satisfies DashboardModuleId[],
   },
   {

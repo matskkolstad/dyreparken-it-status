@@ -14,6 +14,18 @@ For each entry, include:
 
 ## Unreleased
 
+### 2026-07-27 | Environment: production
+
+#### What changed
+- Removed `Nyheter` (`news`) and `Kollektiv` (`entur`) modules from the `Full oversikt` page.
+- Removed `Kollektiv` (`entur`) module from the `Drift & Gjester` page.
+- Both modules remain available on the `Annet` page, so no data source was removed.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3000`)
+
 ### 2026-06-07 | Environment: production
 
 #### What changed
