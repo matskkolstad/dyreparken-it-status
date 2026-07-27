@@ -17,6 +17,16 @@ For each entry, include:
 ### 2026-07-27 | Environment: demo
 
 #### What changed
+- `Spisesteder` and `Butikker` now show even more opening hours: 4-column grid inside the modules (was 3), default item count raised to 20 (max 32), and the resize-based item cap raised from 30 to 40.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3001`)
+
+### 2026-07-27 | Environment: demo
+
+#### What changed
 - `Dyrepresentasjoner` now lays out presentations in a 2-column grid (both dynamic and static mode) so more presentations fit in the module; default item count raised accordingly (6–14, two per visual row).
 - `Spisesteder` and `Butikker` now show more opening hours by default in dynamic mode: default/max item count raised from 9 to 15/24 (5+ visual rows of 3), so the modules display more places out of the box.
 

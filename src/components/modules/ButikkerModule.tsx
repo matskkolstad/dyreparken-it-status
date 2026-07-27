@@ -25,14 +25,14 @@ export function ButikkerModule(props: { refreshToken: number; dynamicMode?: bool
   });
 
   const items = useMemo(() => data?.butikker ?? [], [data?.butikker]);
-  const dynamicLimit = useDynamicListLimit(dynamicMode, 15, {
-    min: 15,
-    max: 24,
+  const dynamicLimit = useDynamicListLimit(dynamicMode, 20, {
+    min: 20,
+    max: 32,
     rowHeight: 66,
     reservedHeight: 300,
     moduleId: "butikker",
     reservedCardHeight: 120,
-    itemsPerRow: 3,
+    itemsPerRow: 4,
   });
 
   const pageItems = useMemo(() => {
@@ -70,7 +70,7 @@ export function ButikkerModule(props: { refreshToken: number; dynamicMode?: bool
               : "dp-auto-scroll h-full min-h-0 overflow-y-auto pr-1"
           }
         >
-          <div className="grid grid-cols-3 gap-1.5">
+          <div className="grid grid-cols-4 gap-1.5">
             {pageItems.map((item) => (
               <div
                 key={item.id}

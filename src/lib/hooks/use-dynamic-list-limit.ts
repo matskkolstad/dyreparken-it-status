@@ -20,7 +20,7 @@ type DynamicLimitOptions = {
   heightShare?: number;
 };
 
-const CARD_MAX_ITEMS = 30;
+const CARD_MAX_ITEMS = 40;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
