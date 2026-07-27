@@ -63,6 +63,8 @@ export function LibreGraylogModule(props: { refreshToken: number; dynamicMode?: 
     max: 10,
     rowHeight: 56,
     reservedHeight: 320,
+    moduleId: "graylog",
+    reservedCardHeight: 140,
   });
 
   const entries = data?.entries ?? [];

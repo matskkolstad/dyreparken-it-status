@@ -48,6 +48,8 @@ export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: bool
     max: 10,
     rowHeight: 28,
     reservedHeight: 390,
+    moduleId: "librenms",
+    reservedCardHeight: 230,
   });
 
   const severity = severityFromLibre(data, error);

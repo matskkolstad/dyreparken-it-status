@@ -27,6 +27,8 @@ export function NinjaOneModule(props: { refreshToken: number; dynamicMode?: bool
     max: 12,
     rowHeight: 28,
     reservedHeight: 400,
+    moduleId: "ninjaone",
+    reservedCardHeight: 230,
   });
 
   const severity = severityFromCounts(data?.offlineCount, error);

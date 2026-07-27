@@ -17,6 +17,18 @@ For each entry, include:
 ### 2026-07-27 | Environment: demo
 
 #### What changed
+- Smoother module moving: cards now animate to their new positions (framer-motion layout animations) when dragging to reorder, adding/removing modules, and on masonry reflow.
+- List content now adapts to user-set card heights in dynamic mode: modules with lists (`Asana` excluded; covers Nyheter, Monotree, LibreNMS, Graylog, NinjaOne, Esper, Kollektiv, Dyrepresentasjoner, Spisesteder, Butikker) show more items when the card is made taller and fewer when shorter, updating live while resizing. Cards without a custom height keep the previous window-based sizing.
+- Fixed `Zoined` module hiding the total guest count on the `Full oversikt` page (TV layout CSS hid `.zoined-total` there); the total now shows on all pages.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3001`)
+
+### 2026-07-27 | Environment: demo
+
+#### What changed
 - Extended edit mode (`Rediger`) with drag-to-move: module cards can now be dragged to a new position on the page; the order is saved with `Lagre`.
 - Added add/remove modules in edit mode: each card gets a red remove button, and a `Legg til modul` chip panel lists modules not currently on the page. Page module composition is stored per browser/page in `localStorage` (`dp.status.pageModules.v1`).
 - Height resizing now snaps to a 40px grid (in addition to width snapping to grid tracks), and a subtle dot grid overlay is shown in edit mode to visualize snapping.

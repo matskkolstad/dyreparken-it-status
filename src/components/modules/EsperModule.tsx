@@ -41,6 +41,8 @@ export function EsperModule(props: { refreshToken: number; dynamicMode?: boolean
     max: 12,
     rowHeight: 28,
     reservedHeight: 400,
+    moduleId: "esper",
+    reservedCardHeight: 230,
   });
 
   const severity = severityFromCounts(data?.offlineCount, error);

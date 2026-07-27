@@ -400,7 +400,6 @@ body.dp-resizing .dp-dyngrid > .dp-card {
     padding: 0.45rem 0.6rem;
   }
 
-  .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-card[data-module-id="zoined"] .zoined-total,
   .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] .dp-card[data-module-id="zoined"] .zoined-updated {
     display: none;
   }

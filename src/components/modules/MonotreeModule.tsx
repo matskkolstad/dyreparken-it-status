@@ -22,6 +22,8 @@ export function MonotreeModule(props: { refreshToken: number; dynamicMode?: bool
     max: 10,
     rowHeight: 96,
     reservedHeight: 340,
+    moduleId: "monotree",
+    reservedCardHeight: 120,
   });
   const staticLimit = 2;
   const pageCount = Math.max(1, Math.ceil(posts.length / staticLimit));

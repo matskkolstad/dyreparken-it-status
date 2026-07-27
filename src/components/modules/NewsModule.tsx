@@ -35,6 +35,8 @@ export function NewsModule(props: { refreshToken: number; dynamicMode?: boolean 
     max: 10,
     rowHeight: 108,
     reservedHeight: 340,
+    moduleId: "news",
+    reservedCardHeight: 120,
   });
 
   const pageItems = useMemo(() => {

@@ -30,6 +30,9 @@ export function ButikkerModule(props: { refreshToken: number; dynamicMode?: bool
     max: 9,
     rowHeight: 86,
     reservedHeight: 300,
+    moduleId: "butikker",
+    reservedCardHeight: 120,
+    itemsPerRow: 3,
   });
 
   const pageItems = useMemo(() => {

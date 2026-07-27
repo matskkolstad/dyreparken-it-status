@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
@@ -84,7 +85,7 @@ export function ModuleCard(props: {
 
   const autoSpan = useMasonrySpan(innerRef, cardRef, dynamicMode && savedH == null);
 
-  const { startResize } = useCardResize({
+  const { startResize, isResizing } = useCardResize({
     cardRef,
     enabled: editMode,
     onResize: (size: ModuleSize) => sizeCtx?.setDraftSize(size),
@@ -173,8 +174,10 @@ export function ModuleCard(props: {
   );
 
   return (
-    <section
+    <motion.section
       ref={cardRef}
+      layout={dynamicMode && !isResizing}
+      transition={{ layout: { duration: 0.3, ease: [0.2, 0.7, 0.2, 1] } }}
       className={[
         "dp-card break-inside-avoid",
         dynamicMode
@@ -219,6 +222,6 @@ export function ModuleCard(props: {
           {content}
         </>
       )}
-    </section>
+    </motion.section>
   );
 }

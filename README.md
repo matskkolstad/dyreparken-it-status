@@ -409,7 +409,8 @@ Detaljer:
 - Alt lagres i nettleseren (`localStorage`, noklene `dp.status.moduleSizes.v1` og `dp.status.pageModules.v1`) og gjelder kun den nettleseren
 - Storrelser og modulsammensetning lagres per side, sa samme modul kan ha ulik storrelse pa ulike sider
 - Bredden snapper til kolonner i et 12-spors rutenett; hoyden snapper i 40px-trinn (et prikkerutenett vises under redigering)
-- Kort med lagret hoyde klipper innhold som ikke far plass
+- Moduler med lister tilpasser innholdet til kortets hoyde: storre kort viser flere rader, mindre kort viser faerre (oppdateres live mens du drar)
+- Innhold som likevel ikke far plass i et kort med lagret hoyde, klippes
 - Siderotering og sidebytte er pauset mens redigering pagar
 
 ### Skjermoppsett (1920x1080)

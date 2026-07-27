@@ -30,6 +30,9 @@ export function SpisestederModule(props: { refreshToken: number; dynamicMode?: b
     max: 9,
     rowHeight: 86,
     reservedHeight: 300,
+    moduleId: "spisesteder",
+    reservedCardHeight: 120,
+    itemsPerRow: 3,
   });
 
   const pageItems = useMemo(() => {

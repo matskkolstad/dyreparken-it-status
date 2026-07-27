@@ -30,6 +30,8 @@ export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicM
     max: 9,
     rowHeight: 88,
     reservedHeight: 350,
+    moduleId: "dyrepresentasjoner",
+    reservedCardHeight: 150,
   });
 
   const pageItems = useMemo(() => {

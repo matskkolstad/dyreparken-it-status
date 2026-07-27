@@ -38,6 +38,8 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
     max: 10,
     rowHeight: 74,
     reservedHeight: 360,
+    moduleId: "entur",
+    reservedCardHeight: 150,
   });
   const staticScrollRef = useRef<HTMLDivElement>(null);
 
