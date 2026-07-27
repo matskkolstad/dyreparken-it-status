@@ -14,6 +14,16 @@ For each entry, include:
 
 ## Unreleased
 
+### 2026-07-27 | Environment: production
+
+#### What changed
+- Promoted all demo changes from 2026-07-27 to production (fast-forward of `main` to the `demo` branch head): edit mode with resize/move/add/remove of modules, grid snapping, page zoom, size-adaptive module content, compacted dagsprogram/Kollektiv modules, 2-column dyrepresentasjoner, `Fullført` rename, Zoined total fix, and hidden-scrollbar page scrolling.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3000`); confirmed `dp-dyngrid` present in served markup.
+
 ### 2026-07-27 | Environment: demo
 
 #### What changed
