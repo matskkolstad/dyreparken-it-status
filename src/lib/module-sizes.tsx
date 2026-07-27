@@ -9,6 +9,11 @@ export type ModuleSize = { w?: number; h?: number };
 
 const SIZE_STORAGE_KEY = "dp.status.moduleSizes.v1";
 const MODULES_STORAGE_KEY = "dp.status.pageModules.v1";
+const ZOOM_STORAGE_KEY = "dp.status.pageZoom.v1";
+
+export const MIN_ZOOM = 0.6;
+export const MAX_ZOOM = 1.4;
+export const ZOOM_STEP = 0.05;
 
 export const MIN_SPAN = 2;
 export const MAX_SPAN = 12;
@@ -105,6 +110,27 @@ function sameModules(a: readonly DashboardModuleId[], b: readonly DashboardModul
   return a.length === b.length && a.every((id, i) => id === b[i]);
 }
 
+function readStoredZoom(): number {
+  if (typeof window === "undefined") return 1;
+  try {
+    const raw = window.localStorage.getItem(ZOOM_STORAGE_KEY);
+    if (!raw) return 1;
+    const parsed = Number(raw);
+    if (!Number.isFinite(parsed)) return 1;
+    return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, parsed));
+  } catch {
+    return 1;
+  }
+}
+
+function writeStoredZoom(zoom: number) {
+  try {
+    window.localStorage.setItem(ZOOM_STORAGE_KEY, String(zoom));
+  } catch (err) {
+    console.warn("Kunne ikke lagre zoom", err);
+  }
+}
+
 export type DropPosition = "before" | "after";
 
 export type ModuleSizeContextValue = {
@@ -152,6 +178,10 @@ export function useModuleSizesController(
   const [draftSizes, setDraftSizes] = useState<Record<string, ModuleSize>>({});
   const [draftModules, setDraftModules] = useState<DashboardModuleId[] | null>(null);
   const [dragId, setDragId] = useState<string | null>(null);
+  const [savedZoom, setSavedZoom] = useState<number>(() => readStoredZoom());
+  const [draftZoom, setDraftZoom] = useState<number>(savedZoom);
+
+  const effectiveZoom = editMode ? draftZoom : savedZoom;
 
   const effectiveModules = useMemo<DashboardModuleId[]>(() => {
     if (editMode && draftModules) return draftModules;
@@ -161,8 +191,9 @@ export function useModuleSizesController(
   const beginEdit = useCallback(() => {
     setDraftSizes(pageEntries(savedSizes, pageId));
     setDraftModules(savedModules[pageId] ?? [...defaultModules]);
+    setDraftZoom(savedZoom);
     setEditMode(true);
-  }, [savedSizes, savedModules, pageId, defaultModules]);
+  }, [savedSizes, savedModules, pageId, defaultModules, savedZoom]);
 
   const cancelEdit = useCallback(() => {
     setEditMode(false);
@@ -200,16 +231,26 @@ export function useModuleSizesController(
       writeStoredModules(next);
       return next;
     });
+    setSavedZoom(draftZoom);
+    writeStoredZoom(draftZoom);
     setEditMode(false);
     setDraftSizes({});
     setDraftModules(null);
     setDragId(null);
-  }, [draftSizes, draftModules, pageId, defaultModules]);
+  }, [draftSizes, draftModules, draftZoom, pageId, defaultModules]);
 
   const resetPage = useCallback(() => {
     setDraftSizes({});
     setDraftModules([...defaultModules]);
+    setDraftZoom(1);
   }, [defaultModules]);
+
+  const adjustZoom = useCallback((direction: 1 | -1) => {
+    setDraftZoom((prev) => {
+      const next = Math.round((prev + direction * ZOOM_STEP) * 100) / 100;
+      return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, next));
+    });
+  }, []);
 
   const setDraftSize = useCallback((moduleId: string, size: ModuleSize) => {
     setDraftSizes((prev) => ({
@@ -268,6 +309,8 @@ export function useModuleSizesController(
   return {
     editMode,
     effectiveModules,
+    effectiveZoom,
+    adjustZoom,
     beginEdit,
     cancelEdit,
     saveEdit,

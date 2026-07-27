@@ -28,6 +28,25 @@ body {
     Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
+/* Sidescrolling er tillatt, men scrollbaren skjules alltid */
+html,
+body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Shell fyller alltid skjermen, også ved zoom < 100 % */
+.dp-page-shell {
+  min-height: calc(100vh / var(--dp-zoom, 1));
+}
+
 .dp-header-widget {
   min-height: 72px;
   height: 72px;
@@ -222,22 +241,17 @@ body.dp-resizing .dp-dyngrid > .dp-card {
   html,
   body {
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .dp-page-shell {
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  html[data-page-id="oversikt"][data-dynamic-mode="true"],
-  body[data-page-id="oversikt"][data-dynamic-mode="true"] {
-    overflow: hidden;
+    min-height: calc(100vh / var(--dp-zoom, 1));
   }
 
   .dp-page-shell[data-page-id="oversikt"] {
     padding: 1.25rem 1.5rem;
-    height: 100vh;
+    min-height: calc(100vh / var(--dp-zoom, 1));
     display: flex;
     flex-direction: column;
   }
@@ -419,7 +433,7 @@ body.dp-resizing .dp-dyngrid > .dp-card {
 
 .dp-page-shell[data-page-id="oversikt"][data-dynamic-mode="true"] {
   padding: 0.85rem 1rem;
-  height: 100vh;
+  min-height: calc(100vh / var(--dp-zoom, 1));
   display: flex;
   flex-direction: column;
 }

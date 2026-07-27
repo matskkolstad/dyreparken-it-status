@@ -33,13 +33,13 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
   });
 
   const departures = useMemo(() => data?.departures ?? [], [data?.departures]);
-  const dynamicLimit = useDynamicListLimit(dynamicMode, 2, {
-    min: 3,
-    max: 10,
-    rowHeight: 74,
+  const dynamicLimit = useDynamicListLimit(dynamicMode, 3, {
+    min: 4,
+    max: 14,
+    rowHeight: 60,
     reservedHeight: 360,
     moduleId: "entur",
-    reservedCardHeight: 150,
+    reservedCardHeight: 140,
   });
   const staticScrollRef = useRef<HTMLDivElement>(null);
 
@@ -82,7 +82,7 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
           <div
             ref={dynamicMode ? undefined : staticScrollRef}
             key={`entur-list-${dynamicMode ? "dynamic" : "static"}`}
-            className={dynamicMode ? "space-y-2 overflow-hidden" : "dp-auto-scroll space-y-2 overflow-y-auto pr-1"}
+            className={dynamicMode ? "space-y-1.5 overflow-hidden" : "dp-auto-scroll space-y-1.5 overflow-y-auto pr-1"}
           >
             {pageDepartures.map((departure) => {
               const isDelayed = (departure.delayMinutes ?? 0) > 0;
@@ -92,19 +92,19 @@ export function EnturModule(props: { refreshToken: number; dynamicMode?: boolean
               return (
                 <div
                   key={departure.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2 ring-1 ring-inset ring-white/10"
+                  className="flex items-center justify-between gap-3 rounded-lg bg-white/5 px-2.5 py-1.5 ring-1 ring-inset ring-white/10"
                 >
                   <div className="min-w-0">
-                    <div className="inline-flex rounded-md bg-[color:rgba(15,184,137,0.2)] px-2 py-0.5 text-xs font-semibold text-[color:rgba(170,255,230,0.95)] ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)]">
-                      Linje {departure.line}
+                    <div className="flex items-center gap-1.5">
+                      <span className="inline-flex shrink-0 rounded-md bg-[color:rgba(15,184,137,0.2)] px-1.5 py-0.5 text-[11px] font-semibold text-[color:rgba(170,255,230,0.95)] ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)]">
+                        {departure.line}
+                      </span>
+                      <span className="truncate text-xs text-white/90">{departure.destination}</span>
                     </div>
-                    <div className="mt-1 truncate text-sm text-white/90">{departure.destination}</div>
-                    <div className="truncate text-xs text-white/55">{departure.stopName}</div>
-                    {departure.platform ? (
-                      <div className="truncate text-xs text-white/45">
-                        Plattform {departure.platform}
-                      </div>
-                    ) : null}
+                    <div className="truncate text-[11px] text-white/55">
+                      {departure.stopName}
+                      {departure.platform ? ` · Plattform ${departure.platform}` : ""}
+                    </div>
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-semibold text-white/95">

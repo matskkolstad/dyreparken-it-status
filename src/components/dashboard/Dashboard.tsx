@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Pause, Pencil, Play, RefreshCw, RotateCcw, Save, SkipForward, Timer, X } from "lucide-react";
+import { Pause, Pencil, Play, RefreshCw, RotateCcw, Save, SkipForward, Timer, X, ZoomIn, ZoomOut } from "lucide-react";
 import { cloneElement, useEffect, useState } from "react";
 
 import {
@@ -198,7 +198,7 @@ export function Dashboard() {
   const activePage = pages[activePageIndex] ?? pages[0]!;
 
   const sizeController = useModuleSizesController(activePage.id, activePage.modules);
-  const { editMode, effectiveModules } = sizeController;
+  const { editMode, effectiveModules, effectiveZoom } = sizeController;
 
   useEffect(() => {
     document.body.dataset.pageId = activePage.id;
@@ -295,6 +295,7 @@ export function Dashboard() {
       data-dynamic-mode={dynamicMode ? "true" : "false"}
       data-controls-hidden={controlsHidden ? "true" : "false"}
       data-edit-mode={editMode ? "true" : "false"}
+      style={{ zoom: effectiveZoom, "--dp-zoom": effectiveZoom } as React.CSSProperties}
     >
       <header className="dp-page-header flex items-start justify-between gap-6">
         {/* Branding */}
@@ -407,6 +408,27 @@ export function Dashboard() {
 
           {editMode ? (
             <>
+              <div className="flex items-center gap-1 rounded-full bg-white/5 px-2 py-1 ring-1 ring-inset ring-white/10">
+                <button
+                  type="button"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/85 hover:bg-white/10 transition-colors"
+                  onClick={() => sizeController.adjustZoom(-1)}
+                  aria-label="Zoom ut"
+                >
+                  <ZoomOut className="h-4 w-4" aria-hidden="true" />
+                </button>
+                <span className="w-12 text-center text-xs font-semibold tabular-nums text-white/85">
+                  {Math.round(effectiveZoom * 100)}%
+                </span>
+                <button
+                  type="button"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full text-white/85 hover:bg-white/10 transition-colors"
+                  onClick={() => sizeController.adjustZoom(1)}
+                  aria-label="Zoom inn"
+                >
+                  <ZoomIn className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
               <button
                 type="button"
                 className="inline-flex items-center gap-2 rounded-full bg-[color:rgba(15,184,137,0.16)] px-4 py-2 text-sm font-semibold text-white/95 ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)] hover:bg-[color:rgba(15,184,137,0.22)] transition-colors"

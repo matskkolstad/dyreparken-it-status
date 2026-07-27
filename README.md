@@ -401,6 +401,7 @@ I dynamisk modus kan du tilpasse hver side med **Rediger**-knappen i toppbaren (
 - **Flytte moduler**: dra et kort til en ny plassering pa siden
 - **Fjerne moduler**: trykk pa den rode X-knappen oppe til hoyre pa kortet
 - **Legge til moduler**: bruk `Legg til modul`-panelet over rutenettet
+- **Zoome**: bruk `-`/`+`-knappene i toppbaren for a zoome hele siden (60-140 %); lagres med `Lagre`
 
 Avslutt med **Lagre** for a beholde endringene, **Avbryt** for a forkaste, eller **Tilbakestill** for a nullstille siden til standardoppsettet.
 

@@ -17,6 +17,18 @@ For each entry, include:
 ### 2026-07-27 | Environment: demo
 
 #### What changed
+- Added page zoom controls in edit mode: `-` / `+` buttons with a live percentage (60–140 %, 5 % steps). The zoom applies to the whole dashboard, is saved with `Lagre` (localStorage `dp.status.pageZoom.v1`), reverted by `Avbryt`, and reset to 100 % by `Tilbakestill`. Layout heights compensate via `--dp-zoom` so the shell always fills the screen.
+- `Kollektiv` now fits more departures: compacted rows (line badge + destination on one line, stop/platform merged), row estimate lowered, and limits raised from 3–10 to 4–14.
+- Pages can now scroll vertically: removed the `overflow: hidden` locks on `html`/`body`/page shell (TV layout included) and switched fixed `100vh` heights to `min-height`, while scrollbars are always hidden via CSS (`scrollbar-width: none` + WebKit rules).
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3001`)
+
+### 2026-07-27 | Environment: demo
+
+#### What changed
 - `Spisesteder` and `Butikker` now show even more opening hours: 4-column grid inside the modules (was 3), default item count raised to 20 (max 32), and the resize-based item cap raised from 30 to 40.
 
 #### How it was verified
