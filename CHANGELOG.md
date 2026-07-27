@@ -14,6 +14,17 @@ For each entry, include:
 
 ## Unreleased
 
+### 2026-07-27 | Environment: production
+
+#### What changed
+- Promoted the `Bilder` module to production (fast-forward of `main` to the `demo` branch head).
+- Copied existing images from the demo checkout to `public/bilder/` in production (images are gitignored per-environment content and do not follow git).
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3000`); `/api/bilder` lists the images and `/api/bilder/gokart.jpg` returns HTTP 200.
+
 ### 2026-07-27 | Environment: demo
 
 #### What changed
