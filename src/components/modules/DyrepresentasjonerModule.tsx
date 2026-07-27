@@ -25,13 +25,14 @@ export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicM
   });
 
   const items = useMemo(() => data?.dyrepresentasjoner ?? [], [data?.dyrepresentasjoner]);
-  const dynamicLimit = useDynamicListLimit(dynamicMode, 3, {
-    min: 3,
-    max: 9,
+  const dynamicLimit = useDynamicListLimit(dynamicMode, 6, {
+    min: 6,
+    max: 14,
     rowHeight: 72,
     reservedHeight: 350,
     moduleId: "dyrepresentasjoner",
     reservedCardHeight: 150,
+    itemsPerRow: 2,
   });
 
   const pageItems = useMemo(() => {
@@ -78,8 +79,8 @@ export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicM
           ref={dynamicMode ? undefined : staticScrollRef}
           className={
             dynamicMode
-              ? "space-y-1.5 overflow-hidden"
-              : "dp-auto-scroll space-y-1.5 overflow-y-auto pr-1"
+              ? "grid grid-cols-2 content-start gap-1.5 overflow-hidden"
+              : "dp-auto-scroll grid grid-cols-2 content-start gap-1.5 overflow-y-auto pr-1"
           }
         >
           {pageItems.map((item) => (
@@ -111,7 +112,7 @@ export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicM
             </div>
           ))}
           {items.length ? null : (
-            <div className="rounded-xl bg-white/5 px-3 py-2 text-sm text-white/65 ring-1 ring-inset ring-white/10">
+            <div className="col-span-2 rounded-xl bg-white/5 px-3 py-2 text-sm text-white/65 ring-1 ring-inset ring-white/10">
               Ingen dyrepresentasjoner funnet for valgt dato.
             </div>
           )}

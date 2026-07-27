@@ -17,6 +17,17 @@ For each entry, include:
 ### 2026-07-27 | Environment: demo
 
 #### What changed
+- `Dyrepresentasjoner` now lays out presentations in a 2-column grid (both dynamic and static mode) so more presentations fit in the module; default item count raised accordingly (6–14, two per visual row).
+- `Spisesteder` and `Butikker` now show more opening hours by default in dynamic mode: default/max item count raised from 9 to 15/24 (5+ visual rows of 3), so the modules display more places out of the box.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3001`)
+
+### 2026-07-27 | Environment: demo
+
+#### What changed
 - Size-adaptive content now covers all modules: `LibreNMS` alerts and alert history lists (previously hardcoded to 5) and the `Asana` task list now also grow/shrink with user-set card heights. Added a `heightShare` option to `useDynamicListLimit` so multiple lists in one card split the available height.
 - Compacted item boxes in `Spisesteder` and `Butikker` (smaller padding, text, and min-height) so more places fit in the modules; the size-based row calculation was tuned accordingly.
 - `Dyrepresentasjoner`: renamed `Avlyst` to `Fullført` (per-presentation badge and module status), restyled passed time slots from red to neutral gray (they usually mean finished, not cancelled), and compacted the presentation boxes to fit more content.

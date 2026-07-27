@@ -25,9 +25,9 @@ export function SpisestederModule(props: { refreshToken: number; dynamicMode?: b
   });
 
   const items = useMemo(() => data?.spisesteder ?? [], [data?.spisesteder]);
-  const dynamicLimit = useDynamicListLimit(dynamicMode, 9, {
-    min: 9,
-    max: 9,
+  const dynamicLimit = useDynamicListLimit(dynamicMode, 15, {
+    min: 15,
+    max: 24,
     rowHeight: 66,
     reservedHeight: 300,
     moduleId: "spisesteder",

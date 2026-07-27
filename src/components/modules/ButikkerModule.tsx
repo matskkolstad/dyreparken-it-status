@@ -25,9 +25,9 @@ export function ButikkerModule(props: { refreshToken: number; dynamicMode?: bool
   });
 
   const items = useMemo(() => data?.butikker ?? [], [data?.butikker]);
-  const dynamicLimit = useDynamicListLimit(dynamicMode, 9, {
-    min: 9,
-    max: 9,
+  const dynamicLimit = useDynamicListLimit(dynamicMode, 15, {
+    min: 15,
+    max: 24,
     rowHeight: 66,
     reservedHeight: 300,
     moduleId: "butikker",
