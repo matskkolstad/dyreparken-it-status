@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { Pause, Play, RefreshCw, SkipForward, Timer } from "lucide-react";
+import { Pause, Pencil, Play, RefreshCw, RotateCcw, Save, SkipForward, Timer, X } from "lucide-react";
 import { cloneElement, useEffect, useState } from "react";
 
 import {
@@ -14,6 +14,7 @@ import {
 import type { DashboardModuleId, OpeningHours, WeatherCurrent } from "@/lib/types";
 import { useNow } from "@/lib/hooks/use-now";
 import { useApiData } from "@/lib/hooks/use-api-data";
+import { ModuleSizeContext, useModuleSizesController } from "@/lib/module-sizes";
 
 import { AsanaModule } from "@/components/modules/AsanaModule";
 import { ButikkerModule } from "@/components/modules/ButikkerModule";
@@ -194,6 +195,9 @@ export function Dashboard() {
 
   const activePage = pages[activePageIndex] ?? pages[0]!;
 
+  const sizeController = useModuleSizesController(activePage.id);
+  const { editMode } = sizeController;
+
   useEffect(() => {
     document.body.dataset.pageId = activePage.id;
     document.body.dataset.dynamicMode = dynamicMode ? "true" : "false";
@@ -207,6 +211,8 @@ export function Dashboard() {
   }, [controlsHidden]);
 
   useEffect(() => {
+    if (editMode) return;
+
     let idleTimer: number | undefined;
 
     const setIdleTimer = () => {
@@ -232,7 +238,7 @@ export function Dashboard() {
       window.removeEventListener("keydown", markActive);
       window.removeEventListener("touchstart", markActive);
     };
-  }, []);
+  }, [editMode]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
@@ -270,7 +276,7 @@ export function Dashboard() {
       window.removeEventListener("resize", checkOverflow);
     };
   }, [activePage.id, dynamicMode]);
-  const rotationIsActive = rotationEnabled && pages.length > 1;
+  const rotationIsActive = rotationEnabled && pages.length > 1 && !editMode;
 
   useEffect(() => {
     if (!rotationIsActive) return;
@@ -286,6 +292,7 @@ export function Dashboard() {
       data-page-id={activePage.id}
       data-dynamic-mode={dynamicMode ? "true" : "false"}
       data-controls-hidden={controlsHidden ? "true" : "false"}
+      data-edit-mode={editMode ? "true" : "false"}
     >
       <header className="dp-page-header flex items-start justify-between gap-6">
         {/* Branding */}
@@ -349,7 +356,7 @@ export function Dashboard() {
             type="button"
             className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors disabled:opacity-40"
             onClick={() => setActivePageIndex((i) => (i + 1) % pages.length)}
-            disabled={pages.length < 2}
+            disabled={pages.length < 2 || editMode}
           >
             <SkipForward className="h-4 w-4" aria-hidden="true" />
             Neste
@@ -373,11 +380,57 @@ export function Dashboard() {
                 ? "bg-[color:rgba(98,182,255,0.16)] text-white/95 ring-[color:rgba(98,182,255,0.35)] hover:bg-[color:rgba(98,182,255,0.24)]"
                 : "bg-white/5 text-white/90 ring-white/10 hover:bg-white/10",
             ].join(" ")}
-            onClick={() => setDynamicMode((v) => !v)}
+            onClick={() => {
+              if (editMode) sizeController.cancelEdit();
+              setDynamicMode((v) => !v);
+            }}
             aria-pressed={dynamicMode}
           >
             Dynamisk
           </button>
+
+          {dynamicMode && !editMode ? (
+            <button
+              type="button"
+              className="dp-controls-hideable inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors"
+              onClick={() => {
+                setControlsHidden(false);
+                sizeController.beginEdit();
+              }}
+            >
+              <Pencil className="h-4 w-4" aria-hidden="true" />
+              Rediger
+            </button>
+          ) : null}
+
+          {editMode ? (
+            <>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full bg-[color:rgba(15,184,137,0.16)] px-4 py-2 text-sm font-semibold text-white/95 ring-1 ring-inset ring-[color:rgba(15,184,137,0.35)] hover:bg-[color:rgba(15,184,137,0.22)] transition-colors"
+                onClick={sizeController.saveEdit}
+              >
+                <Save className="h-4 w-4" aria-hidden="true" />
+                Lagre
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors"
+                onClick={sizeController.resetPage}
+              >
+                <RotateCcw className="h-4 w-4" aria-hidden="true" />
+                Tilbakestill
+              </button>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-semibold text-white/90 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors"
+                onClick={sizeController.cancelEdit}
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+                Avbryt
+              </button>
+            </>
+          ) : null}
 
           <div className="flex items-center gap-3">
             <div className="hidden md:block">
@@ -434,6 +487,7 @@ export function Dashboard() {
                     key={page.id}
                     type="button"
                     onClick={() => setActivePageIndex(i)}
+                    disabled={editMode}
                     aria-label={`Gå til side: ${page.title}`}
                     className={[
                       "h-2 rounded-full transition-all duration-300",
@@ -447,14 +501,13 @@ export function Dashboard() {
             </div>
 
             {dynamicMode ? (
-              <div
-                className="dp-page-content dp-columns mt-4 columns-1 md:columns-2 xl:columns-3 [column-fill:_balance]"
-                style={activePage.id === "oversikt" ? { columnGap: "1.2rem" } : undefined}
-              >
-                {activePage.modules.map((id) =>
-                  cloneElement(renderModule(id, refreshToken, true), { key: id }),
-                )}
-              </div>
+              <ModuleSizeContext.Provider value={sizeController.contextValue}>
+                <div className="dp-page-content dp-dyngrid mt-4">
+                  {activePage.modules.map((id) =>
+                    cloneElement(renderModule(id, refreshToken, true), { key: id }),
+                  )}
+                </div>
+              </ModuleSizeContext.Provider>
             ) : (
               <div className="dp-page-content dp-grid mt-4 grid gap-4 md:gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-[240px] md:auto-rows-[260px]">
                 {activePage.modules.map((id) =>

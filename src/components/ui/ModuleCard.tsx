@@ -1,6 +1,11 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import type { ModuleSeverity } from "@/lib/types";
+import { ROW_UNIT, useModuleSize, type ModuleSize } from "@/lib/module-sizes";
+import { useCardResize, type ResizeAxis } from "@/lib/hooks/use-card-resize";
+import { useMasonrySpan } from "@/lib/hooks/use-masonry-span";
 
 const severityStyles: Record<
   ModuleSeverity,
@@ -32,6 +37,25 @@ const severityStyles: Record<
   },
 };
 
+function ResizeHandle(props: {
+  axis: ResizeAxis;
+  onPointerDown: (event: React.PointerEvent<HTMLElement>, axis: ResizeAxis) => void;
+}) {
+  const axisClass =
+    props.axis === "x"
+      ? "dp-resize-handle-x"
+      : props.axis === "y"
+        ? "dp-resize-handle-y"
+        : "dp-resize-handle-xy";
+  return (
+    <div
+      className={`dp-resize-handle ${axisClass}`}
+      onPointerDown={(e) => props.onPointerDown(e, props.axis)}
+      role="presentation"
+    />
+  );
+}
+
 export function ModuleCard(props: {
   moduleId?: string;
   title: string;
@@ -47,58 +71,131 @@ export function ModuleCard(props: {
   const styles = severityStyles[props.severity];
   const dynamicMode = props.dynamicMode ?? false;
   const rowSpan = Math.max(1, Math.round(props.rowSpan ?? 1));
+
+  const cardRef = useRef<HTMLElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+
+  const sizeCtx = useModuleSize(props.moduleId);
+  const editMode = dynamicMode && (sizeCtx?.editMode ?? false);
+  const savedW = dynamicMode ? sizeCtx?.size?.w : undefined;
+  const savedH = dynamicMode ? sizeCtx?.size?.h : undefined;
+
+  const autoSpan = useMasonrySpan(innerRef, cardRef, dynamicMode && savedH == null);
+
+  const { startResize } = useCardResize({
+    cardRef,
+    enabled: editMode,
+    onResize: (size: ModuleSize) => sizeCtx?.setDraftSize(size),
+  });
+
+  const [marginBottom, setMarginBottom] = useState(0);
+  useLayoutEffect(() => {
+    if (!dynamicMode || savedH == null) return;
+    const card = cardRef.current;
+    if (!card) return;
+    const update = () => {
+      const next = parseFloat(window.getComputedStyle(card).marginBottom) || 0;
+      setMarginBottom((prev) => (prev === next ? prev : next));
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [dynamicMode, savedH]);
+
+  let dynamicStyle: CSSProperties | undefined;
+  if (dynamicMode) {
+    dynamicStyle = {
+      gridColumn: savedW ? `span ${savedW}` : undefined,
+      gridRow:
+        savedH != null
+          ? `span ${Math.max(1, Math.ceil((savedH + marginBottom) / ROW_UNIT))}`
+          : autoSpan != null
+            ? `span ${autoSpan}`
+            : undefined,
+      height: savedH != null ? savedH : undefined,
+      overflow: savedH != null ? "hidden" : undefined,
+    };
+  }
+
+  const header = (
+    <header className="flex items-start justify-between gap-4">
+      <div className="min-w-0">
+        <div className="flex items-center gap-3">
+          <h2 className="truncate text-lg font-semibold tracking-tight text-white/95 md:text-xl">
+            {props.title}
+          </h2>
+          <span
+            className={[
+              "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset",
+              styles.pill,
+            ].join(" ")}
+          >
+            <span className="relative flex h-2 w-2">
+              <span
+                className={[
+                  "relative inline-flex h-2 w-2 rounded-full",
+                  styles.dot,
+                ].join(" ")}
+              />
+            </span>
+            {props.statusText}
+          </span>
+        </div>
+        {props.subtitle ? (
+          <div className="mt-1 text-xs text-white/55">{props.subtitle}</div>
+        ) : null}
+      </div>
+      {props.right ? <div className="shrink-0">{props.right}</div> : null}
+    </header>
+  );
+
+  const content = (
+    <div className={dynamicMode ? "mt-4" : "mt-4 min-h-0 flex-1"}>
+      <div
+        key={props.pulseKey ?? "stable"}
+        className={dynamicMode ? "animate-monotree-scroll" : "h-full min-h-0 animate-monotree-scroll"}
+      >
+        {props.children}
+      </div>
+    </div>
+  );
+
   return (
     <section
+      ref={cardRef}
       className={[
         "dp-card break-inside-avoid",
         dynamicMode
-          ? "rounded-2xl bg-[color:var(--card)] ring-1 ring-inset"
+          ? "relative rounded-2xl bg-[color:var(--card)] ring-1 ring-inset"
           : "h-full min-h-0 overflow-hidden rounded-2xl bg-[color:var(--card)] ring-1 ring-inset flex flex-col",
         "px-5 py-5 md:px-6 md:py-6",
         styles.ring,
         "shadow-[0_0_0_1px_rgba(255,255,255,0.04)]",
       ].join(" ")}
-      style={{ "--dp-row-span": rowSpan } as React.CSSProperties}
+      style={{ "--dp-row-span": rowSpan, ...dynamicStyle } as CSSProperties}
       data-row-span={rowSpan}
       data-module-id={props.moduleId}
     >
-      <header className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex items-center gap-3">
-            <h2 className="truncate text-lg font-semibold tracking-tight text-white/95 md:text-xl">
-              {props.title}
-            </h2>
-            <span
-              className={[
-                "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset",
-                styles.pill,
-              ].join(" ")}
-            >
-              <span className="relative flex h-2 w-2">
-                <span
-                  className={[
-                    "relative inline-flex h-2 w-2 rounded-full",
-                    styles.dot,
-                  ].join(" ")}
-                />
-              </span>
-              {props.statusText}
-            </span>
+      {dynamicMode ? (
+        <>
+          <div ref={innerRef} className="dp-card-inner">
+            {header}
+            {content}
           </div>
-          {props.subtitle ? (
-            <div className="mt-1 text-xs text-white/55">{props.subtitle}</div>
+          {editMode ? (
+            <>
+              <ResizeHandle axis="x" onPointerDown={startResize} />
+              <ResizeHandle axis="y" onPointerDown={startResize} />
+              <ResizeHandle axis="xy" onPointerDown={startResize} />
+            </>
           ) : null}
-        </div>
-        {props.right ? <div className="shrink-0">{props.right}</div> : null}
-      </header>
-      <div className={dynamicMode ? "mt-4" : "mt-4 min-h-0 flex-1"}>
-        <div
-          key={props.pulseKey ?? "stable"}
-          className={dynamicMode ? "animate-monotree-scroll" : "h-full min-h-0 animate-monotree-scroll"}
-        >
-          {props.children}
-        </div>
-      </div>
+        </>
+      ) : (
+        <>
+          {header}
+          {content}
+        </>
+      )}
     </section>
   );
 }

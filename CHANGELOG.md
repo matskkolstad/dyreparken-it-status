@@ -14,6 +14,21 @@ For each entry, include:
 
 ## Unreleased
 
+### 2026-07-27 | Environment: demo
+
+#### What changed
+- Added resizable module cards in dynamic mode: a new `Rediger` button in the top bar enables edit mode where each module card can be resized with the mouse (right edge = width, bottom edge = height, corner = both).
+- Added `Lagre` (persist), `Tilbakestill` (reset current page), and `Avbryt` (discard) buttons in edit mode.
+- Sizes are stored per browser in `localStorage` (`dp.status.moduleSizes.v1`) and per page, so the same module can have different sizes on different pages.
+- Migrated the dynamic-mode layout from CSS multi-columns to a 12-track CSS grid with ResizeObserver-based masonry (`.dp-dyngrid`), which keeps the default look but makes per-module width spans possible. Removed dead per-module `grid-column/grid-row` CSS rules that would have conflicted.
+- Page rotation, `Neste`, and page dots are paused/disabled while editing; controls no longer auto-hide during edit.
+- Known behavior changes: card order in dynamic mode flows row-first (previously column-first), and cards with a saved height clip overflowing content.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3001`) and confirmed `dp-dyngrid` present in served markup.
+
 ### 2026-07-27 | Environment: production
 
 #### What changed

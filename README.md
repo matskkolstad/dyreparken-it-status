@@ -14,6 +14,7 @@ Statusdashboard for IT-avdelingen i Dyreparken Kristiansand. Nettsiden samler da
 - **Animert fremdriftslinje** – Viser gjenværende tid på aktiv side
 - **Pulserende statusindikator** – Grønn/gul/rød for hver modul
 - **Dynamisk modus** – Modulene utvider seg automatisk og viser mer detaljert info
+- **Justerbare modulstørrelser** – I dynamisk modus kan modulkortene endres i bredde/høyde via `Rediger`-knappen, og lagres per nettleser og side
 - **Stabil statisk layout** – I ikke-dynamisk modus holdes innhold innenfor hvert kort uten overlapping
 - **Auto-scroll i statisk modus** – Moduler med mer innhold scroller rolig automatisk nar `Dynamisk` er av
 - **Visuell prioritering** – Kritiske avvik/offline-feil kan vises i storre kort
@@ -391,6 +392,22 @@ Slas av/paa med knappen **Dynamisk** i toppbaren (pa som standard). I dynamisk m
 - Modulene tilpasser hoyden etter innhold og skjermstorrelse
 - Enkelte moduler viser mer data (f.eks. flere bussavganger og flere offline-enheter)
 - Kritiske avvik kan vises i storre kort for bedre synlighet
+
+### Endre storrelse pa moduler (dynamisk modus)
+
+I dynamisk modus kan du justere storrelsen pa hvert modulkort:
+
+1. Trykk **Rediger** i toppbaren (kun synlig nar `Dynamisk` er pa)
+2. Dra i hoyre kant (bredde), nedre kant (hoyde) eller hjornet (begge) pa et kort
+3. Trykk **Lagre** for a beholde storrelsene, **Avbryt** for a forkaste, eller **Tilbakestill** for a nullstille siden
+
+Detaljer:
+
+- Storrelsene lagres i nettleseren (`localStorage`, nokkel `dp.status.moduleSizes.v1`) og gjelder kun den nettleseren
+- Storrelser lagres per side, sa samme modul kan ha ulik storrelse pa ulike sider
+- Bredden snapper til kolonner i et 12-spors rutenett; hoyden er trinnlos
+- Kort med lagret hoyde klipper innhold som ikke far plass
+- Siderotering og sidebytte er pauset mens redigering pagar
 
 ### Skjermoppsett (1920x1080)
 
