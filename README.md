@@ -393,19 +393,22 @@ Slas av/paa med knappen **Dynamisk** i toppbaren (pa som standard). I dynamisk m
 - Enkelte moduler viser mer data (f.eks. flere bussavganger og flere offline-enheter)
 - Kritiske avvik kan vises i storre kort for bedre synlighet
 
-### Endre storrelse pa moduler (dynamisk modus)
+### Rediger sideoppsett (dynamisk modus)
 
-I dynamisk modus kan du justere storrelsen pa hvert modulkort:
+I dynamisk modus kan du tilpasse hver side med **Rediger**-knappen i toppbaren (kun synlig nar `Dynamisk` er pa):
 
-1. Trykk **Rediger** i toppbaren (kun synlig nar `Dynamisk` er pa)
-2. Dra i hoyre kant (bredde), nedre kant (hoyde) eller hjornet (begge) pa et kort
-3. Trykk **Lagre** for a beholde storrelsene, **Avbryt** for a forkaste, eller **Tilbakestill** for a nullstille siden
+- **Endre storrelse**: dra i hoyre kant (bredde), nedre kant (hoyde) eller hjornet (begge) pa et kort
+- **Flytte moduler**: dra et kort til en ny plassering pa siden
+- **Fjerne moduler**: trykk pa den rode X-knappen oppe til hoyre pa kortet
+- **Legge til moduler**: bruk `Legg til modul`-panelet over rutenettet
+
+Avslutt med **Lagre** for a beholde endringene, **Avbryt** for a forkaste, eller **Tilbakestill** for a nullstille siden til standardoppsettet.
 
 Detaljer:
 
-- Storrelsene lagres i nettleseren (`localStorage`, nokkel `dp.status.moduleSizes.v1`) og gjelder kun den nettleseren
-- Storrelser lagres per side, sa samme modul kan ha ulik storrelse pa ulike sider
-- Bredden snapper til kolonner i et 12-spors rutenett; hoyden er trinnlos
+- Alt lagres i nettleseren (`localStorage`, noklene `dp.status.moduleSizes.v1` og `dp.status.pageModules.v1`) og gjelder kun den nettleseren
+- Storrelser og modulsammensetning lagres per side, sa samme modul kan ha ulik storrelse pa ulike sider
+- Bredden snapper til kolonner i et 12-spors rutenett; hoyden snapper i 40px-trinn (et prikkerutenett vises under redigering)
 - Kort med lagret hoyde klipper innhold som ikke far plass
 - Siderotering og sidebytte er pauset mens redigering pagar
 

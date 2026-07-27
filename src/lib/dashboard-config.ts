@@ -51,3 +51,35 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
 
 export const DEFAULT_ROTATION_ENABLED = DASHBOARD_PAGES.length > 1;
 export const DEFAULT_PAGE_DURATION_SECONDS = 30;
+
+export const ALL_MODULE_IDS: DashboardModuleId[] = [
+  "weather",
+  "asana",
+  "monotree",
+  "news",
+  "librenms",
+  "graylog",
+  "ninjaone",
+  "esper",
+  "zoined",
+  "entur",
+  "dyrepresentasjoner",
+  "spisesteder",
+  "butikker",
+];
+
+export const MODULE_LABELS: Record<DashboardModuleId, string> = {
+  weather: "Vær",
+  asana: "Asana",
+  monotree: "Monotree",
+  news: "Nyheter",
+  librenms: "LibreNMS",
+  graylog: "Graylog",
+  ninjaone: "NinjaOne",
+  esper: "Esper",
+  zoined: "Zoined",
+  entur: "Kollektiv",
+  dyrepresentasjoner: "Dyrepresentasjoner",
+  spisesteder: "Spisesteder",
+  butikker: "Butikker",
+};

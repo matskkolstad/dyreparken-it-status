@@ -17,6 +17,19 @@ For each entry, include:
 ### 2026-07-27 | Environment: demo
 
 #### What changed
+- Extended edit mode (`Rediger`) with drag-to-move: module cards can now be dragged to a new position on the page; the order is saved with `Lagre`.
+- Added add/remove modules in edit mode: each card gets a red remove button, and a `Legg til modul` chip panel lists modules not currently on the page. Page module composition is stored per browser/page in `localStorage` (`dp.status.pageModules.v1`).
+- Height resizing now snaps to a 40px grid (in addition to width snapping to grid tracks), and a subtle dot grid overlay is shown in edit mode to visualize snapping.
+- `Tilbakestill` now also resets the page's module composition to the default from `dashboard-config`.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3001`); confirmed new edit-mode strings present in built client chunks.
+
+### 2026-07-27 | Environment: demo
+
+#### What changed
 - Added resizable module cards in dynamic mode: a new `Rediger` button in the top bar enables edit mode where each module card can be resized with the mouse (right edge = width, bottom edge = height, corner = both).
 - Added `Lagre` (persist), `Tilbakestill` (reset current page), and `Avbryt` (discard) buttons in edit mode.
 - Sizes are stored per browser in `localStorage` (`dp.status.moduleSizes.v1`) and per page, so the same module can have different sizes on different pages.

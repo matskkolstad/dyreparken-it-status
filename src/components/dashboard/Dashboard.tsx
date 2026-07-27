@@ -6,10 +6,12 @@ import { Pause, Pencil, Play, RefreshCw, RotateCcw, Save, SkipForward, Timer, X 
 import { cloneElement, useEffect, useState } from "react";
 
 import {
+  ALL_MODULE_IDS,
   DASHBOARD_PAGES,
   DEFAULT_PAGE_DURATION_SECONDS,
   DEFAULT_REFRESH_INTERVAL_MS,
   DEFAULT_ROTATION_ENABLED,
+  MODULE_LABELS,
 } from "@/lib/dashboard-config";
 import type { DashboardModuleId, OpeningHours, WeatherCurrent } from "@/lib/types";
 import { useNow } from "@/lib/hooks/use-now";
@@ -195,8 +197,8 @@ export function Dashboard() {
 
   const activePage = pages[activePageIndex] ?? pages[0]!;
 
-  const sizeController = useModuleSizesController(activePage.id);
-  const { editMode } = sizeController;
+  const sizeController = useModuleSizesController(activePage.id, activePage.modules);
+  const { editMode, effectiveModules } = sizeController;
 
   useEffect(() => {
     document.body.dataset.pageId = activePage.id;
@@ -502,8 +504,28 @@ export function Dashboard() {
 
             {dynamicMode ? (
               <ModuleSizeContext.Provider value={sizeController.contextValue}>
+                {editMode ? (
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-white/45">
+                      Legg til modul:
+                    </span>
+                    {ALL_MODULE_IDS.filter((id) => !effectiveModules.includes(id)).map((id) => (
+                      <button
+                        key={id}
+                        type="button"
+                        className="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-3 py-1.5 text-xs font-semibold text-white/85 ring-1 ring-inset ring-white/10 hover:bg-white/10 transition-colors"
+                        onClick={() => sizeController.addModule(id)}
+                      >
+                        + {MODULE_LABELS[id]}
+                      </button>
+                    ))}
+                    {ALL_MODULE_IDS.every((id) => effectiveModules.includes(id)) ? (
+                      <span className="text-xs text-white/45">Alle moduler er lagt til.</span>
+                    ) : null}
+                  </div>
+                ) : null}
                 <div className="dp-page-content dp-dyngrid mt-4">
-                  {activePage.modules.map((id) =>
+                  {effectiveModules.map((id) =>
                     cloneElement(renderModule(id, refreshToken, true), { key: id }),
                   )}
                 </div>

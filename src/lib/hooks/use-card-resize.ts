@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 
 import {
+  HEIGHT_SNAP,
   MAX_HEIGHT,
   MAX_SPAN,
   MIN_HEIGHT,
@@ -76,7 +77,8 @@ export function useCardResize(opts: {
           size.w = clamp(Math.round((desiredWidth + gap) / (track + gap)), MIN_SPAN, MAX_SPAN);
         }
         if (axis !== "x") {
-          size.h = clamp(Math.round(startRect.height + dy), MIN_HEIGHT, MAX_HEIGHT);
+          const snapped = Math.round((startRect.height + dy) / HEIGHT_SNAP) * HEIGHT_SNAP;
+          size.h = clamp(snapped, MIN_HEIGHT, MAX_HEIGHT);
         }
         onResizeRef.current(size);
       };

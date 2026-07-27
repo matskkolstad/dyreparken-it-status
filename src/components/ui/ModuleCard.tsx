@@ -1,9 +1,11 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import type { ModuleSeverity } from "@/lib/types";
 import { ROW_UNIT, useModuleSize, type ModuleSize } from "@/lib/module-sizes";
+import { useCardMove } from "@/lib/hooks/use-card-move";
 import { useCardResize, type ResizeAxis } from "@/lib/hooks/use-card-resize";
 import { useMasonrySpan } from "@/lib/hooks/use-masonry-span";
 
@@ -87,6 +89,16 @@ export function ModuleCard(props: {
     enabled: editMode,
     onResize: (size: ModuleSize) => sizeCtx?.setDraftSize(size),
   });
+
+  const { startMove } = useCardMove({
+    cardRef,
+    moduleId: props.moduleId,
+    enabled: editMode,
+    moveModule: sizeCtx?.moveModule ?? (() => {}),
+    setDragId: sizeCtx?.setDragId ?? (() => {}),
+  });
+
+  const isDragged = editMode && sizeCtx?.dragId === props.moduleId;
 
   const [marginBottom, setMarginBottom] = useState(0);
   useLayoutEffect(() => {
@@ -175,6 +187,8 @@ export function ModuleCard(props: {
       style={{ "--dp-row-span": rowSpan, ...dynamicStyle } as CSSProperties}
       data-row-span={rowSpan}
       data-module-id={props.moduleId}
+      data-dragging={isDragged ? "true" : undefined}
+      onPointerDown={editMode ? startMove : undefined}
     >
       {dynamicMode ? (
         <>
@@ -187,6 +201,15 @@ export function ModuleCard(props: {
               <ResizeHandle axis="x" onPointerDown={startResize} />
               <ResizeHandle axis="y" onPointerDown={startResize} />
               <ResizeHandle axis="xy" onPointerDown={startResize} />
+              <button
+                type="button"
+                className="absolute right-2 top-2 z-20 inline-flex h-7 w-7 items-center justify-center rounded-full bg-[color:rgba(255,107,61,0.9)] text-white shadow-lg ring-2 ring-[color:#070b12] transition-colors hover:bg-[color:rgba(255,107,61,1)]"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={() => sizeCtx?.removeModule()}
+                aria-label={`Fjern modul: ${props.title}`}
+              >
+                <X className="h-4 w-4" aria-hidden="true" />
+              </button>
             </>
           ) : null}
         </>
