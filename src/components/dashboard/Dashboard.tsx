@@ -19,6 +19,7 @@ import { useApiData } from "@/lib/hooks/use-api-data";
 import { ModuleSizeContext, useModuleSizesController } from "@/lib/module-sizes";
 
 import { AsanaModule } from "@/components/modules/AsanaModule";
+import { BilderModule } from "@/components/modules/BilderModule";
 import { ButikkerModule } from "@/components/modules/ButikkerModule";
 import { DyrepresentasjonerModule } from "@/components/modules/DyrepresentasjonerModule";
 import { EnturModule } from "@/components/modules/EnturModule";
@@ -60,6 +61,8 @@ function renderModule(id: DashboardModuleId, refreshToken: number, dynamicMode: 
       return <ZoinedModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
     case "entur":
       return <EnturModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
+    case "bilder":
+      return <BilderModule refreshToken={refreshToken} dynamicMode={dynamicMode} />;
   }
 }
 

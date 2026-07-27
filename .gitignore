@@ -51,3 +51,7 @@ secrets/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Brukeropplastede bilder til Bilder-modulen (per miljo, ikke i git)
+public/bilder/*
+!public/bilder/README.md

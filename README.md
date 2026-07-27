@@ -207,6 +207,16 @@ Bruker Entur Real-time GraphQL API for å vise neste bussavganger fra Dyreparken
 
 Foresporslene sendes med header `ET-Client-Name`, og modulen viser de neste relevante bussavgangene med sanntidsindikator.
 
+### Bilder (slideshow)
+
+Modulen `Bilder` viser et slideshow av bilder du legger inn selv (5 sekunder per bilde, myk overgang).
+
+1. Legg bildefiler i mappen `public/bilder/` pa serveren
+2. Stottede formater: `.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`, `.avif`
+3. Bildene vises i alfabetisk rekkefolge og plukkes opp automatisk (ingen rebuild nodvendig)
+
+Modulen ligger pa siden `Annet` som standard, og kan legges til andre sider via redigeringsmodus. Ingen miljovariabler kreves.
+
 ### Dagsprogram (Dyrepresentasjoner, Spisesteder, Butikker)
 
 Modulene `Dyrepresentasjoner`, `Spisesteder` og `Butikker` bruker Dyreparkens dagsprogram-data for dagens dato.

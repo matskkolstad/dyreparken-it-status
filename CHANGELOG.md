@@ -14,6 +14,19 @@ For each entry, include:
 
 ## Unreleased
 
+### 2026-07-27 | Environment: demo
+
+#### What changed
+- Added new `Bilder` module showing a slideshow of user-provided images: 5 seconds per image with a 1-second crossfade, image counter overlay, and automatic pickup of new files (no rebuild needed).
+- Images are read from `public/bilder/` (supported: jpg/jpeg/png/webp/gif/avif, alphabetical order); a README in the folder documents usage.
+- Added `/api/bilder` (lists images) and `/api/bilder/[name]` (serves image bytes from disk) — the latter because `next start` does not serve files added to `public/` after build.
+- Module added to the `Annet` page by default and to the module registry, so it can be added to any page via edit mode.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + API checks: `/api/bilder` lists a runtime-added file without rebuild, and `/api/bilder/gokart.jpg` returns HTTP 200 with `image/jpeg`.
+
 ### 2026-07-27 | Environment: production
 
 #### What changed

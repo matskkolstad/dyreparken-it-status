@@ -13,7 +13,8 @@ export type DashboardModuleId =
   | "entur"
   | "dyrepresentasjoner"
   | "spisesteder"
-  | "butikker";
+  | "butikker"
+  | "bilder";
 
 export type DashboardPage = {
   id: string;
@@ -160,6 +161,16 @@ export type DailyProgrammeListingItem = {
   id: string;
   name: string;
   openingTime: string;
+};
+
+export type BilderImage = {
+  id: string;
+  name: string;
+  url: string;
+};
+
+export type BilderFeed = ApiMeta & {
+  images: BilderImage[];
 };
 
 export type DailyProgrammeFeed = ApiMeta & {

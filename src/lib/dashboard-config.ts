@@ -45,6 +45,7 @@ export const DASHBOARD_PAGES: DashboardPage[] = [
       "entur",
       "monotree",
       "news",
+      "bilder",
     ] satisfies DashboardModuleId[],
   },
 ];
@@ -66,6 +67,7 @@ export const ALL_MODULE_IDS: DashboardModuleId[] = [
   "dyrepresentasjoner",
   "spisesteder",
   "butikker",
+  "bilder",
 ];
 
 export const MODULE_LABELS: Record<DashboardModuleId, string> = {
@@ -82,4 +84,5 @@ export const MODULE_LABELS: Record<DashboardModuleId, string> = {
   dyrepresentasjoner: "Dyrepresentasjoner",
   spisesteder: "Spisesteder",
   butikker: "Butikker",
+  bilder: "Bilder",
 };
