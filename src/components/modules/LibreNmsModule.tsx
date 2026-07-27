@@ -49,7 +49,26 @@ export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: bool
     rowHeight: 28,
     reservedHeight: 390,
     moduleId: "librenms",
-    reservedCardHeight: 230,
+    reservedCardHeight: 240,
+    heightShare: 0.34,
+  });
+  const alertLimit = useDynamicListLimit(dynamicMode, 5, {
+    min: 5,
+    max: 5,
+    rowHeight: 46,
+    reservedHeight: 390,
+    moduleId: "librenms",
+    reservedCardHeight: 240,
+    heightShare: 0.33,
+  });
+  const historyLimit = useDynamicListLimit(dynamicMode, 5, {
+    min: 5,
+    max: 5,
+    rowHeight: 46,
+    reservedHeight: 390,
+    moduleId: "librenms",
+    reservedCardHeight: 240,
+    heightShare: 0.33,
   });
 
   const severity = severityFromLibre(data, error);
@@ -113,7 +132,7 @@ export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: bool
           <div className="rounded-2xl bg-white/5 ring-1 ring-inset ring-white/10">
             <div className="px-4 py-2 text-xs font-semibold text-white/60">Advarsler</div>
             <div className="px-4 pb-3">
-              {(data?.alerts ?? []).slice(0, 5).map((alert) => (
+              {(data?.alerts ?? []).slice(0, dynamicMode ? alertLimit : 5).map((alert) => (
                 <div key={alert.id} className="flex items-start justify-between gap-3 py-1 text-sm text-white/85">
                   <div className="min-w-0">
                     <div className="truncate">{alert.device}</div>
@@ -133,7 +152,7 @@ export function LibreNmsModule(props: { refreshToken: number; dynamicMode?: bool
           <div className="rounded-2xl bg-white/5 ring-1 ring-inset ring-white/10">
             <div className="px-4 py-2 text-xs font-semibold text-white/60">Alert History</div>
             <div className="px-4 pb-3">
-              {(data?.alertHistory ?? []).slice(0, 5).map((alert) => (
+              {(data?.alertHistory ?? []).slice(0, dynamicMode ? historyLimit : 5).map((alert) => (
                 <div key={alert.id} className="flex items-start justify-between gap-3 py-1 text-sm text-white/85">
                   <div className="min-w-0">
                     <div className="truncate">{alert.device}</div>

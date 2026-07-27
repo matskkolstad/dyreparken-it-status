@@ -7,6 +7,7 @@ import type { AsanaMetrics } from "@/lib/types";
 import { DEFAULT_REFRESH_INTERVAL_MS } from "@/lib/dashboard-config";
 import { useApiData } from "@/lib/hooks/use-api-data";
 import { useAutoScroll } from "@/lib/hooks/use-auto-scroll";
+import { useDynamicListLimit } from "@/lib/hooks/use-dynamic-list-limit";
 import { ModuleCard } from "@/components/ui/ModuleCard";
 
 function severityFromMetrics(m?: AsanaMetrics, error?: string) {
@@ -27,7 +28,16 @@ export function AsanaModule(props: { refreshToken: number; dynamicMode?: boolean
   const severity = severityFromMetrics(data, error);
   const rowSpan = !dynamicMode ? 2 : severity === "degraded" ? 2 : 1;
   const statusText = error ? "Feil" : data?.isDummyData ? "Dummy" : "Live";
-  const latestTasks = data?.latestTasks ?? [];
+  const taskLimit = useDynamicListLimit(dynamicMode, 10, {
+    min: 10,
+    max: 10,
+    rowHeight: 46,
+    reservedHeight: 300,
+    moduleId: "asana",
+    reservedCardHeight: 220,
+  });
+  const allTasks = data?.latestTasks ?? [];
+  const latestTasks = dynamicMode ? allTasks.slice(0, taskLimit) : allTasks;
   const listRef = useRef<HTMLUListElement>(null);
 
   useAutoScroll(listRef, !dynamicMode && latestTasks.length > 0, [data?.lastUpdatedAt, dynamicMode], 14);

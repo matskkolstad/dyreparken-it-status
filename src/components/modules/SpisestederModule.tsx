@@ -28,7 +28,7 @@ export function SpisestederModule(props: { refreshToken: number; dynamicMode?: b
   const dynamicLimit = useDynamicListLimit(dynamicMode, 9, {
     min: 9,
     max: 9,
-    rowHeight: 86,
+    rowHeight: 66,
     reservedHeight: 300,
     moduleId: "spisesteder",
     reservedCardHeight: 120,
@@ -70,14 +70,14 @@ export function SpisestederModule(props: { refreshToken: number; dynamicMode?: b
               : "dp-auto-scroll h-full min-h-0 overflow-y-auto pr-1"
           }
         >
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-1.5">
             {pageItems.map((item) => (
               <div
                 key={item.id}
-                className="min-h-[86px] rounded-xl bg-white/5 px-3 py-2 ring-1 ring-inset ring-white/10"
+                className="min-h-[60px] rounded-lg bg-white/5 px-2 py-1.5 ring-1 ring-inset ring-white/10"
               >
-                <div className="line-clamp-2 text-sm text-white/90">{item.name}</div>
-                <div className="mt-2 inline-flex rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-200 ring-1 ring-inset ring-emerald-400/30">
+                <div className="line-clamp-2 text-xs leading-snug text-white/90">{item.name}</div>
+                <div className="mt-1 inline-flex rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-200 ring-1 ring-inset ring-emerald-400/30">
                   {item.openingTime}
                 </div>
               </div>

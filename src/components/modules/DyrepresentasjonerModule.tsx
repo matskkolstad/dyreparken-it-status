@@ -28,7 +28,7 @@ export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicM
   const dynamicLimit = useDynamicListLimit(dynamicMode, 3, {
     min: 3,
     max: 9,
-    rowHeight: 88,
+    rowHeight: 72,
     reservedHeight: 350,
     moduleId: "dyrepresentasjoner",
     reservedCardHeight: 150,
@@ -57,7 +57,7 @@ export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicM
       : hasActivePresentations
         ? "Live"
         : items.length > 0
-          ? "Avlyst"
+          ? "Fullført"
           : "Ingen funn";
 
   return (
@@ -78,30 +78,30 @@ export function DyrepresentasjonerModule(props: { refreshToken: number; dynamicM
           ref={dynamicMode ? undefined : staticScrollRef}
           className={
             dynamicMode
-              ? "space-y-2 overflow-hidden"
-              : "dp-auto-scroll space-y-2 overflow-y-auto pr-1"
+              ? "space-y-1.5 overflow-hidden"
+              : "dp-auto-scroll space-y-1.5 overflow-y-auto pr-1"
           }
         >
           {pageItems.map((item) => (
             <div
               key={item.id}
-              className="rounded-xl bg-white/5 px-3 py-2 ring-1 ring-inset ring-white/10"
+              className="rounded-lg bg-white/5 px-2.5 py-1.5 ring-1 ring-inset ring-white/10"
             >
               <div className="flex items-center justify-between gap-2">
-                <div className="truncate text-sm font-semibold text-white/95">{item.name}</div>
+                <div className="truncate text-xs font-semibold text-white/95">{item.name}</div>
                 {item.hasCancelledTimes ? (
-                  <span className="shrink-0 text-xs font-semibold text-red-300">Avlyst</span>
+                  <span className="shrink-0 text-[11px] font-semibold text-white/50">Fullført</span>
                 ) : null}
               </div>
-              <div className="truncate text-xs text-white/55">{item.location}</div>
-              <div className="mt-1 flex flex-wrap gap-1.5">
+              <div className="truncate text-[11px] text-white/55">{item.location}</div>
+              <div className="mt-0.5 flex flex-wrap gap-1">
                 {item.times.map((time) => (
                   <span
                     key={`${item.id}-${time.label}`}
                     className={
                       time.cancelled
-                        ? "rounded-md bg-red-500/20 px-2 py-0.5 text-xs text-red-200 line-through ring-1 ring-inset ring-red-400/30"
-                        : "rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-200 ring-1 ring-inset ring-emerald-400/30"
+                        ? "rounded-md bg-white/10 px-1.5 py-0.5 text-[11px] text-white/45 line-through ring-1 ring-inset ring-white/15"
+                        : "rounded-md bg-emerald-500/15 px-1.5 py-0.5 text-[11px] text-emerald-200 ring-1 ring-inset ring-emerald-400/30"
                     }
                   >
                     {time.label}

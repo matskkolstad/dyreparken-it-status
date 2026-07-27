@@ -17,6 +17,18 @@ For each entry, include:
 ### 2026-07-27 | Environment: demo
 
 #### What changed
+- Size-adaptive content now covers all modules: `LibreNMS` alerts and alert history lists (previously hardcoded to 5) and the `Asana` task list now also grow/shrink with user-set card heights. Added a `heightShare` option to `useDynamicListLimit` so multiple lists in one card split the available height.
+- Compacted item boxes in `Spisesteder` and `Butikker` (smaller padding, text, and min-height) so more places fit in the modules; the size-based row calculation was tuned accordingly.
+- `Dyrepresentasjoner`: renamed `Avlyst` to `Fullført` (per-presentation badge and module status), restyled passed time slots from red to neutral gray (they usually mean finished, not cancelled), and compacted the presentation boxes to fit more content.
+
+#### How it was verified
+- `npm run lint`
+- `npm run build`
+- Service restart + HTTP health check (`curl -I http://127.0.0.1:3001`)
+
+### 2026-07-27 | Environment: demo
+
+#### What changed
 - Smoother module moving: cards now animate to their new positions (framer-motion layout animations) when dragging to reorder, adding/removing modules, and on masonry reflow.
 - List content now adapts to user-set card heights in dynamic mode: modules with lists (`Asana` excluded; covers Nyheter, Monotree, LibreNMS, Graylog, NinjaOne, Esper, Kollektiv, Dyrepresentasjoner, Spisesteder, Butikker) show more items when the card is made taller and fewer when shorter, updating live while resizing. Cards without a custom height keep the previous window-based sizing.
 - Fixed `Zoined` module hiding the total guest count on the `Full oversikt` page (TV layout CSS hid `.zoined-total` there); the total now shows on all pages.

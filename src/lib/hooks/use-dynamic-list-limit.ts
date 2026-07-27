@@ -15,6 +15,9 @@ type DynamicLimitOptions = {
   reservedCardHeight?: number;
   /** Antall elementer per visuell rad (f.eks. 3 for rutenett-moduler). */
   itemsPerRow?: number;
+  /** Andel (0–1) av kortets tilgjengelige høyde denne listen kan bruke
+   *  når kortet har flere lister (f.eks. LibreNMS). */
+  heightShare?: number;
 };
 
 const CARD_MAX_ITEMS = 30;
@@ -60,7 +63,9 @@ export function useDynamicListLimit(
   if (cardHeight != null) {
     const reservedCard = options.reservedCardHeight ?? 160;
     const perRow = options.itemsPerRow ?? 1;
-    const rows = Math.floor(Math.max(0, cardHeight - reservedCard) / rowHeight);
+    const share = options.heightShare ?? 1;
+    const available = Math.max(0, cardHeight - reservedCard) * share;
+    const rows = Math.floor(available / rowHeight);
     return clamp(rows * perRow, 0, CARD_MAX_ITEMS);
   }
 
