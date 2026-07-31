@@ -96,7 +96,7 @@ export function MonotreeModule(props: { refreshToken: number; dynamicMode?: bool
                         {post.title}
                       </div>
                       {post.body ? (
-                        <div className="mt-1 line-clamp-2 text-xs text-white/65">{post.body}</div>
+                        <div className="mt-1 line-clamp-3 text-xs text-white/65">{post.body}</div>
                       ) : null}
                       <div className="mt-1.5 flex items-center gap-2 text-xs text-white/50">
                         {post.author ? <span className="truncate">{post.author}</span> : null}

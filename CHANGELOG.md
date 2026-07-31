@@ -20,13 +20,24 @@ For each entry, include:
 - Koblet Monotree-modulen til ekte Monotree Open API v1 (erstattet placeholder-route).
 - Ny delt API-klient `src/lib/server/monotree.ts` (base-URL, Bearer-auth, vegg-henting) som framtidige Monotree-endepunkter (kalender, announcements, flere vegger) skal gjenbruke.
 - Route `/api/monotree/posts` henter nå innlegg fra vegg-ID-er i `MONOTREE_WALL_IDS` (default `192` = «IT»-veggen), slår sammen flere vegger sortert på nyeste, utleder tittel fra første linje av `body`, tar med forfatter/avatar/tidspunkt, og hopper over tekstløse innlegg.
-- `MonotreePost`-typen utvidet med `body`, `author`, `avatarUrl`, `wallId`, `wallName`. Modulen viser tittel + utdrag + forfatter/avatar + tid, og vegg-tag når flere vegger er slått sammen.
+- `MonotreePost`-typen utvidet med `body`, `author`, `avatarUrl`, `wallId`, `wallName`. Modulen viser tittel + oppsummering + forfatter/avatar + tid, og vegg-tag når flere vegger er slått sammen.
 - Env: `MONOTREE_POSTS_URL` erstattet av `MONOTREE_BASE_URL` + `MONOTREE_WALL_IDS` (se `.env.example`).
+- Ny regelbasert, EKSTRAKTIV oppsummering av veggposter uten AI (`src/lib/monotree-summary.ts`): velger tittel (første meningsfulle linje, hilsen strippet) + ledesetning + høyest scorede nøkkelsetning (ordfrekvens). Robust setnings-splitter bevarer datoer/lister (`16. juni`, `1.`) og forkortelser (`kl.`, `f.eks.`); norske stoppord og rene hilsener filtreres bort. Modulen viser oppsummeringen med `line-clamp-3`.
 
 #### How it was verified
 - `npm run lint` og `npm run build` uten feil.
 - Restartet `dyreparken-it-status-demo`, `curl http://127.0.0.1:3001` → HTTP 200.
-- `curl /api/monotree/posts` → `isDummyData: false`, 9 ekte innlegg fra IT-veggen med korrekt tittel/utdrag/forfatter/avatar/tid (tom bildepost korrekt utelatt).
+- `curl /api/monotree/posts` → `isDummyData: false`, 9 ekte innlegg fra IT-veggen med korrekt tittel + oppsummering/forfatter/avatar/tid (tom bildepost korrekt utelatt). Verifisert at datoer ikke lenger fragmenteres, hilsener strippes fra tittel, og hovedpoeng fanges (f.eks. Pizzakveld-innlegget leder med selve poenget, ikke menylisten).
+
+### 2026-07-31 | Environment: production
+
+#### What changed
+- Promoterte Monotree-integrasjonen til produksjon (fast-forward av `main` til `demo`-head): ekte Monotree Open API v1, delt klient `src/lib/server/monotree.ts`, aggregering av vegger fra `MONOTREE_WALL_IDS`, og regelbasert ekstraktiv oppsummering av veggposter (ingen AI).
+
+#### How it was verified
+- `npm run build` i produksjons-checkouten uten feil.
+- Restartet `dyreparken-it-status.service`, `curl -I http://127.0.0.1:3000` → HTTP 200.
+- `curl /api/monotree/posts` → `isDummyData: false`, ekte innlegg fra IT-veggen.
 
 ### 2026-07-27 | Environment: production
 

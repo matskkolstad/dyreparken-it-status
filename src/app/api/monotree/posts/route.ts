@@ -7,6 +7,7 @@ import {
   parseWallIds,
   type MonotreeApiPost,
 } from "@/lib/server/monotree";
+import { summarizePost } from "@/lib/monotree-summary";
 import type { MonotreeFeed, MonotreePost } from "@/lib/types";
 
 // Innlegg hentes per forespørsel; ingen caching (statustavle skal være fersk).
@@ -17,30 +18,19 @@ const DEFAULT_WALL_IDS = [192];
 const POSTS_PER_WALL = 10;
 const MAX_POSTS = 10;
 
-/** Deler et innlegg i tittel (første tekstlinje) og resten som utdrag. */
-function splitBody(body: string): { title: string; rest: string } {
-  const lines = body
-    .replace(/\r\n/g, "\n")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-  const title = lines[0] ?? "";
-  const rest = lines.slice(1).join(" ").trim();
-  return { title, rest };
-}
-
 function normalizePost(p: MonotreeApiPost): MonotreePost | null {
   const body = (p.body ?? "").trim();
   // Hopp over innlegg uten tekst (f.eks. rene bildeposter) – de gir tomme kort.
   if (!body) return null;
 
-  const { title, rest } = splitBody(body);
+  // Ekstraktiv, regelbasert oppsummering (ingen AI): tittel + viktigste setninger.
+  const { title, summary } = summarizePost(body);
   const created = p.created_at ?? p.updated_at ?? new Date().toISOString();
 
   return {
     id: String(p.id),
     title: title || "Uten tittel",
-    body: rest || undefined,
+    body: summary || undefined,
     publishedAt: new Date(created).toISOString(),
     author: p.author?.name?.trim() || undefined,
     avatarUrl: p.author?.avatar_url || undefined,

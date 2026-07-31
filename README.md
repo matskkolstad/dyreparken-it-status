@@ -149,7 +149,7 @@ Bruker [Monotree Open API v1](https://docs.monotree.com/monotree-llms.txt). Innl
 2. Sett `MONOTREE_WALL_IDS` til veggen(e) som skal vises. Default er `192` («IT»-veggen).
 3. `MONOTREE_BASE_URL` trengs normalt ikke (default er riktig for Dyreparken).
 
-Innlegg har ingen egen tittel i API-et – modulen bruker **første linje** av `body` som overskrift og resten som utdrag. Innlegg uten tekst (rene bildeposter) hoppes over. Delt API-klient ligger i `src/lib/server/monotree.ts` og gjenbrukes av framtidige Monotree-endepunkter (kalender, announcements, flere vegger).
+Innlegg har ingen egen tittel i API-et. Modulen lager derfor tittel + oppsummering med en regelbasert, **ekstraktiv** metode (ingen AI) i `src/lib/monotree-summary.ts`: tittel = første meningsfulle linje (rene hilsener strippes), oppsummering = ledesetning + høyest scorede nøkkelsetning (ordfrekvens, norske stoppord filtrert). Setnings-splitteren bevarer datoer/lister (`16. juni`, `1.`) og forkortelser (`kl.`, `f.eks.`). Innlegg uten tekst (rene bildeposter) hoppes over. Delt API-klient ligger i `src/lib/server/monotree.ts` og gjenbrukes av framtidige Monotree-endepunkter (kalender, announcements, flere vegger).
 
 ### LibreNMS
 
