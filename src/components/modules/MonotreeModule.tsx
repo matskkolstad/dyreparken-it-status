@@ -17,6 +17,11 @@ export function MonotreeModule(props: { refreshToken: number; dynamicMode?: bool
   });
 
   const posts = useMemo(() => (data?.posts ?? []).slice(0, 10), [data?.posts]);
+  // Vis vegg-navn kun når innlegg er slått sammen fra flere vegger.
+  const showWallTag = useMemo(
+    () => new Set(posts.map((p) => p.wallName).filter(Boolean)).size > 1,
+    [posts],
+  );
   const dynamicLimit = useDynamicListLimit(dynamicMode, 2, {
     min: 3,
     max: 10,
@@ -78,14 +83,38 @@ export function MonotreeModule(props: { refreshToken: number; dynamicMode?: bool
                   data-monotree-item
                   className="rounded-2xl bg-white/5 px-4 py-3 ring-1 ring-inset ring-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]"
                 >
-                  <div className="truncate text-sm font-semibold text-white/90">{post.title}</div>
-                  <div className="mt-1 text-xs text-white/55">
-                    {new Date(post.publishedAt).toLocaleString("nb-NO", {
-                      day: "2-digit",
-                      month: "short",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                  <div className="flex items-start gap-3">
+                    {post.avatarUrl ? (
+                      <div
+                        className="mt-0.5 h-8 w-8 shrink-0 rounded-full bg-white/10 bg-cover bg-center ring-1 ring-inset ring-white/15"
+                        style={{ backgroundImage: `url(${post.avatarUrl})` }}
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                    <div className="min-w-0 flex-1">
+                      <div className="line-clamp-2 text-sm font-semibold text-white/90">
+                        {post.title}
+                      </div>
+                      {post.body ? (
+                        <div className="mt-1 line-clamp-2 text-xs text-white/65">{post.body}</div>
+                      ) : null}
+                      <div className="mt-1.5 flex items-center gap-2 text-xs text-white/50">
+                        {post.author ? <span className="truncate">{post.author}</span> : null}
+                        {showWallTag && post.wallName ? (
+                          <span className="shrink-0 rounded bg-white/10 px-1.5 py-0.5 text-[0.65rem] text-white/60">
+                            {post.wallName}
+                          </span>
+                        ) : null}
+                        <span className="ml-auto shrink-0 text-white/45">
+                          {new Date(post.publishedAt).toLocaleString("nb-NO", {
+                            day: "2-digit",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}

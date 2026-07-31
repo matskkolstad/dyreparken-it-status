@@ -51,7 +51,13 @@ export type AsanaTaskSummary = {
 export type MonotreePost = {
   id: string;
   title: string;
+  /** Resten av innlegget etter tittel-linjen (ren tekst). */
+  body?: string;
   publishedAt: string;
+  author?: string;
+  avatarUrl?: string;
+  wallId?: number;
+  wallName?: string;
   url?: string;
 };
 

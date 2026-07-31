@@ -1,30 +1,51 @@
 import { NextResponse } from "next/server";
 
 import { dummyMonotree } from "@/lib/dummy-data";
-import { isDummyDataEnabled, requireEnv } from "@/lib/server/env";
-import { fetchJsonServer } from "@/lib/server/fetch";
+import { isDummyDataEnabled } from "@/lib/server/env";
+import {
+  fetchWallPosts,
+  parseWallIds,
+  type MonotreeApiPost,
+} from "@/lib/server/monotree";
 import type { MonotreeFeed, MonotreePost } from "@/lib/types";
 
-type MonotreeRawPost = {
-  id?: string;
-  title?: string;
-  publishedAt?: string;
-  published_at?: string;
-  url?: string;
-};
+// Innlegg hentes per forespørsel; ingen caching (statustavle skal være fersk).
+export const dynamic = "force-dynamic";
 
-type AnyMonotreePostsResponse =
-  | { posts?: MonotreeRawPost[] }
-  | { data?: MonotreeRawPost[] }
-  | MonotreeRawPost[];
+// "IT"-veggen. Kan overstyres/utvides med MONOTREE_WALL_IDS i env.
+const DEFAULT_WALL_IDS = [192];
+const POSTS_PER_WALL = 10;
+const MAX_POSTS = 10;
 
-function normalizePost(p: MonotreeRawPost, index: number): MonotreePost {
-  const publishedAt = p?.publishedAt ?? p?.published_at ?? new Date().toISOString();
+/** Deler et innlegg i tittel (første tekstlinje) og resten som utdrag. */
+function splitBody(body: string): { title: string; rest: string } {
+  const lines = body
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const title = lines[0] ?? "";
+  const rest = lines.slice(1).join(" ").trim();
+  return { title, rest };
+}
+
+function normalizePost(p: MonotreeApiPost): MonotreePost | null {
+  const body = (p.body ?? "").trim();
+  // Hopp over innlegg uten tekst (f.eks. rene bildeposter) – de gir tomme kort.
+  if (!body) return null;
+
+  const { title, rest } = splitBody(body);
+  const created = p.created_at ?? p.updated_at ?? new Date().toISOString();
+
   return {
-    id: String(p?.id ?? `post-${index}`),
-    title: String(p?.title ?? "Uten tittel"),
-    publishedAt: new Date(publishedAt).toISOString(),
-    url: typeof p?.url === "string" ? p.url : undefined,
+    id: String(p.id),
+    title: title || "Uten tittel",
+    body: rest || undefined,
+    publishedAt: new Date(created).toISOString(),
+    author: p.author?.name?.trim() || undefined,
+    avatarUrl: p.author?.avatar_url || undefined,
+    wallId: typeof p.wall_id === "number" ? p.wall_id : undefined,
+    wallName: p.wall_name?.trim() || undefined,
   };
 }
 
@@ -33,30 +54,35 @@ export async function GET() {
     return NextResponse.json(dummyMonotree());
   }
 
-  // Integration mode: provide a URL that returns latest posts from Monotree (or a proxy).
-  // Example: MONOTREE_POSTS_URL=https://<monotree>/api/posts?limit=10
-  const url = requireEnv("MONOTREE_POSTS_URL");
+  const configured = parseWallIds();
+  const wallIds = configured.length ? configured : DEFAULT_WALL_IDS;
 
-  const raw = await fetchJsonServer<AnyMonotreePostsResponse>(url, {
-    headers: process.env.MONOTREE_API_KEY
-      ? { Authorization: `Bearer ${process.env.MONOTREE_API_KEY}` }
-      : undefined,
-  });
+  // Hent alle vegger parallelt. Én vegg som feiler skal ikke velte hele feeden,
+  // men hvis ALLE feiler lar vi feilen boble opp slik at modulen viser "Feil".
+  const settled = await Promise.allSettled(
+    wallIds.map((id) => fetchWallPosts(id, POSTS_PER_WALL)),
+  );
 
-  const items: MonotreeRawPost[] = Array.isArray(raw)
-    ? raw
-    : Array.isArray((raw as { posts?: MonotreeRawPost[] }).posts)
-      ? (raw as { posts: MonotreeRawPost[] }).posts
-      : Array.isArray((raw as { data?: MonotreeRawPost[] }).data)
-        ? (raw as { data: MonotreeRawPost[] }).data
-        : [];
+  if (settled.length > 0 && settled.every((r) => r.status === "rejected")) {
+    const firstError = settled.find(
+      (r): r is PromiseRejectedResult => r.status === "rejected",
+    );
+    throw firstError?.reason ?? new Error("Kunne ikke hente innlegg fra Monotree.");
+  }
+
+  const posts = settled
+    .flatMap((r) => (r.status === "fulfilled" ? r.value : []))
+    .map(normalizePost)
+    .filter((p): p is MonotreePost => p !== null)
+    // Nyeste først – viktig når vi slår sammen flere vegger.
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+    .slice(0, MAX_POSTS);
 
   const result: MonotreeFeed = {
     lastUpdatedAt: new Date().toISOString(),
     isDummyData: false,
-    posts: items.slice(0, 10).map(normalizePost),
+    posts,
   };
 
   return NextResponse.json(result);
 }
-

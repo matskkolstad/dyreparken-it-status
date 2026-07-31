@@ -14,6 +14,20 @@ For each entry, include:
 
 ## Unreleased
 
+### 2026-07-31 | Environment: demo
+
+#### What changed
+- Koblet Monotree-modulen til ekte Monotree Open API v1 (erstattet placeholder-route).
+- Ny delt API-klient `src/lib/server/monotree.ts` (base-URL, Bearer-auth, vegg-henting) som framtidige Monotree-endepunkter (kalender, announcements, flere vegger) skal gjenbruke.
+- Route `/api/monotree/posts` henter nå innlegg fra vegg-ID-er i `MONOTREE_WALL_IDS` (default `192` = «IT»-veggen), slår sammen flere vegger sortert på nyeste, utleder tittel fra første linje av `body`, tar med forfatter/avatar/tidspunkt, og hopper over tekstløse innlegg.
+- `MonotreePost`-typen utvidet med `body`, `author`, `avatarUrl`, `wallId`, `wallName`. Modulen viser tittel + utdrag + forfatter/avatar + tid, og vegg-tag når flere vegger er slått sammen.
+- Env: `MONOTREE_POSTS_URL` erstattet av `MONOTREE_BASE_URL` + `MONOTREE_WALL_IDS` (se `.env.example`).
+
+#### How it was verified
+- `npm run lint` og `npm run build` uten feil.
+- Restartet `dyreparken-it-status-demo`, `curl http://127.0.0.1:3001` → HTTP 200.
+- `curl /api/monotree/posts` → `isDummyData: false`, 9 ekte innlegg fra IT-veggen med korrekt tittel/utdrag/forfatter/avatar/tid (tom bildepost korrekt utelatt).
+
 ### 2026-07-27 | Environment: production
 
 #### What changed

@@ -79,8 +79,9 @@ cp .env.example .env.local
 | `WEATHER_LOCATION_NAME` | Nei | Visningsnavn for sted |
 | `ASANA_ACCESS_TOKEN` | Ja* | Personlig tilgangstoken fra Asana |
 | `ASANA_PROJECT_GID` | Ja* | GID for Asana-prosjektet |
-| `MONOTREE_POSTS_URL` | Ja* | URL til Monotree-endepunkt |
-| `MONOTREE_API_KEY` | Nei | API-nøkkel for Monotree (valgfritt) |
+| `MONOTREE_BASE_URL` | Nei | Base-URL til Monotree (default `https://dyreparken.monotree.com`; `/api/open/v1` legges på automatisk) |
+| `MONOTREE_API_KEY` | Ja* | Monotree Open API-token (`mono_...`) med minst `read:posts` |
+| `MONOTREE_WALL_IDS` | Nei | Komma-separerte vegg-ID-er som vises (default `192` = «IT»-veggen) |
 | `LIBRENMS_BASE_URL` | Ja* | Base-URL til LibreNMS |
 | `LIBRENMS_API_TOKEN` | Ja* | API-token fra LibreNMS |
 | `LIBRENMS_SWITCH_REGEX` | Nei | Regulært uttrykk for å filtrere switcher |
@@ -142,13 +143,13 @@ Bruker [Asana REST API v1.0](https://developers.asana.com/reference/rest-api-ref
 
 ### Monotree
 
-Bruker Monotrees API (se [Monotree LLMs-dokumentasjon](https://docs.monotree.com/monotree-llms.txt)). Sett `MONOTREE_POSTS_URL` til endepunktet som returnerer siste innlegg. Svaret kan være:
+Bruker [Monotree Open API v1](https://docs.monotree.com/monotree-llms.txt). Innlegg ligger under vegger (`GET /walls/{id}/posts`), så modulen henter fra vegg-ID-ene i `MONOTREE_WALL_IDS` og slår dem sammen sortert på nyeste.
 
-- `{ posts: [...] }`
-- `{ data: [...] }`
-- En direkte array
+1. Opprett et API-token i Monotree med minst scope `read:posts` (`read:walls` om du vil finne vegg-ID-er via API-et), sett det i `MONOTREE_API_KEY`.
+2. Sett `MONOTREE_WALL_IDS` til veggen(e) som skal vises. Default er `192` («IT»-veggen).
+3. `MONOTREE_BASE_URL` trengs normalt ikke (default er riktig for Dyreparken).
 
-Hvert element forventes å ha feltene `id`, `title`, `publishedAt` (eller `published_at`) og valgfritt `url`.
+Innlegg har ingen egen tittel i API-et – modulen bruker **første linje** av `body` som overskrift og resten som utdrag. Innlegg uten tekst (rene bildeposter) hoppes over. Delt API-klient ligger i `src/lib/server/monotree.ts` og gjenbrukes av framtidige Monotree-endepunkter (kalender, announcements, flere vegger).
 
 ### LibreNMS
 
